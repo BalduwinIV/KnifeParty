@@ -7,7 +7,7 @@ var hitRegistered: bool = false
 @export var scoreLabel: Label;
 var score: float = 0.0
 var scoreStandartGain = 0.2
-@onready var scorePopupManager = $"../ScorePopupsManager"
+var scorePopupManager: ScoreManagerClass
 
 @export_range(0.0, 0.1, 0.0001) var cursorWidth: float = 0.002
 @export_range(0.0, 30.0, 0.1) var cursorHeight: float = 20.0
@@ -42,7 +42,7 @@ var cursor: CursorPairClass
 var knifeCurve: KnifePath
 var current_goal: int
 var pattern1: Array[int] = [0, 2, 4, 2, 4, 6, 4, 6, 8, 6, 8, 10, 8, 6, 8, 6, 4, 6, 4, 2, 4, 2]
-var repetition: int = 0  
+var repetition: int = 2
 var playingPhase: bool = true
 var modificatorManager: ModificatorManager
 
@@ -124,6 +124,8 @@ func prepareIntervals() -> void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	scorePopupManager = ScoreManagerClass.new(scoreLabel)
+	get_parent().add_child(scorePopupManager)
 	prepareIntervals()
 	current_goal = 0
 	modificatorManager = ModificatorManager.new()
@@ -241,7 +243,7 @@ func inPlayingPhase(delta: float):
 		var idx = getInterval(hitPos)
 		if idx%2 == 0:
 			$"../AudioKnifeInterval".play(0.15)
-		else:
+		else: 
 			intervals[idx].data_.lives_ -= 1
 			if intervals[idx].data_.lives_ <= 0:
 				$"../GameOver".show()  

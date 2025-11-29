@@ -1,10 +1,14 @@
+class_name ScoreManagerClass
 extends Node
 
 var score: float = 0.0
 @export var scoreBaseInc: float = 1.0
-@export var mainLabel: Label
+var mainLabel: Label
 @export var popupOffsetY: float = 30.0
 var activePopups: Array[Label] = []
+
+func _init(label: Label) -> void:
+	mainLabel = label
 
 func spawnScorePopup(value: float) -> void:
 	var newPopup = Label.new()

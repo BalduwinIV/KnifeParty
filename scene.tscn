@@ -7,7 +7,6 @@
 [ext_resource type="AudioStream" uid="uid://cqh2awkjma13e" path="res://resources/sound/tree_cut.mp3" id="5_y2354"]
 [ext_resource type="AudioStream" uid="uid://c2rvp8i0ytwsp" path="res://resources/sound/pain.mp3" id="6_ni31j"]
 [ext_resource type="Texture2D" uid="uid://c2w6wtcdl702" path="res://resources/images/hand.png" id="6_y2354"]
-[ext_resource type="Script" uid="uid://ccwmlgj2aclke" path="res://Score/ScoreManager.gd" id="8_xlvrw"]
 [ext_resource type="PackedScene" uid="uid://bucgormj5env" path="res://gameOver.tscn" id="8_xlvrw"]
 
 [sub_resource type="Curve2D" id="Curve2D_3253y"]
@@ -86,8 +85,5 @@ position = Vector2(179.00003, 586)
 rotation = 0.32612
 texture = ExtResource("6_y2354")
 
-[node name="ScorePopupsManager" type="Node" parent="." node_paths=PackedStringArray("mainLabel")]
-script = ExtResource("8_xlvrw")
-mainLabel = NodePath("../ScoreLabel")
 [node name="GameOver" parent="." instance=ExtResource("8_xlvrw")]
 visible = false
