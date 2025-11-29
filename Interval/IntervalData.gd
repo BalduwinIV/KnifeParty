@@ -12,6 +12,8 @@ var pathLength_: float
 var widthPx_: float
 var halfWidthPx_: float
 
+var lives_: int = 2
+
 var scoreMultiplier_: float = 1.0
 var neutralScoreColor_: Color = Color.GREEN
 var lowScoreColor_: Color = Color.RED

@@ -36,7 +36,9 @@ var cursor: CursorPairClass
 var knifeCurve: KnifePath
 var current_goal: int
 var pattern1: Array[int] = [0, 2, 4, 0, 4, 6, 8, 0, 10]
-var repetition: int = 0  
+var repetition: int = 3  
+var playingPhase: bool = true
+var modificatorManager: ModificatorManager
 
 func prepareIntervals() -> void:
 	var pathLength = self.curve.get_baked_length()
@@ -112,12 +114,16 @@ func prepareIntervals() -> void:
 	intervals.append(i5)
 	intervals.append(f5)
 	intervals.append(i6)
+	
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	prepareIntervals()
 	current_goal = 0
+	modificatorManager = ModificatorManager.new()
+	add_child(modificatorManager )
 	drawIntervals()
+	
 	$"../KnifeCurve/Path2D2/PathFollow2D".reposition(0)
 	
 	
@@ -173,8 +179,7 @@ func drawIntervals() -> void:
 		else:
 			redrawInterval(i)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func inPlayingPhase(delta: float):
 	intervals[1].data_.recalculatePoint(f1Pos, f1Width)
 	intervals[3].data_.recalculatePoint(f2Pos, f2Width)
 	intervals[5].data_.recalculatePoint(f3Pos, f3Width)
@@ -190,11 +195,16 @@ func _process(delta: float) -> void:
 	intervals[10].data_.recalculateInterval(intervals[9].data_.end_, 1.0)
 	
 	if Input.is_action_just_pressed("ui_accept"):
+		modificatorManager.apply()
 		var idx = getInterval()
-		if idx%2 == 0:
+		if idx%2 == 0:	
 			$"../AudioKnifeInterval".play()
 		else:
+			intervals[idx].data_.lives_ -= 1
+			if intervals[idx].data_.lives_ <= 0:
+				$"../GameOver".show()  
 			$"../AudioKnifeFinger".play()
+			return
 		if idx == pattern1[current_goal]:
 			var offset = getOffsetInsideInterval()
 			var scoreInc: float
@@ -215,7 +225,7 @@ func _process(delta: float) -> void:
 			addScorePoints(scoreInc)
 			current_goal += 1
 			if current_goal == pattern1.size():
-				repetition +=1
+				repetition -=1
 				current_goal = 0
 			
 			if pattern1[current_goal] < idx:
@@ -235,3 +245,15 @@ func _process(delta: float) -> void:
 	
 	cursor.view_.reposition()
 	$"../KnifeCurve/Path2D3/PathFollow2D".reposition(cursor.data_.pos_)
+		
+
+	
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	if repetition > 0:
+		inPlayingPhase(delta)
+		
+	if repetition == 0:
+		playingPhase = false
+		modificatorManager.view_.showButtons()	
