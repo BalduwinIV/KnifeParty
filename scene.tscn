@@ -5,21 +5,22 @@
 [sub_resource type="Curve2D" id="Curve2D_3253y"]
 bake_interval = 0.01
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 200, 300, 0, 0, 0, 0, 600, 300)
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 700, 0)
 }
 point_count = 2
 
 [node name="Scene" type="Node2D"]
 
 [node name="Path2D" type="Path2D" parent="." node_paths=PackedStringArray("cursorPathFollow")]
+position = Vector2(50, 50)
 curve = SubResource("Curve2D_3253y")
 script = ExtResource("1_ulcgi")
-fingerPos = 0.27
-fingerWidth = 0.13
+f1Width = 0.062
+f3Width = 0.079
+f4Pos = 0.71
 cursorPathFollow = NodePath("PathFollow2D")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
-position = Vector2(200, 300)
 
 [node name="Polygon2D" type="Polygon2D" parent="Path2D/PathFollow2D"]
 z_index = 2

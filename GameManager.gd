@@ -1,52 +1,189 @@
 extends Path2D
 
 @export var t: float = 0.0
-@export_range(0.0, 1.0, 0.01) var fingerPos: float = 0.5
-@export_range(0.0, 1.0, 0.01) var fingerWidth: float = 0.1
+
+# Finger 1
+@export_range(0.0, 1.0, 0.0025) var f1Pos: float = 0.1
+@export_range(0.0, 0.2, 0.001) var f1Width: float = 0.07
+
+# Finger 2
+@export_range(0.0, 1.0, 0.0025) var f2Pos: float = 0.3
+@export_range(0.0, 0.2, 0.001) var f2Width: float = 0.05
+
+# Finger 3
+@export_range(0.0, 1.0, 0.0025) var f3Pos: float = 0.5
+@export_range(0.0, 0.2, 0.001) var f3Width: float = 0.05     
+
+# Finger 4
+@export_range(0.0, 1.0, 0.0025) var f4Pos: float = 0.7
+@export_range(0.0, 0.2, 0.001) var f4Width: float = 0.05     
+
+# Finger 5
+@export_range(0.0, 1.0, 0.0025) var f5Pos: float = 0.9
+@export_range(0.0, 0.2, 0.001) var f5Width: float = 0.05
 
 @export var cursorPathFollow: PathFollow2D;
+@export var cursorDir: float = 1.0
 
-var intervals: Array[IntervalDataClass]
+var intervals: Array[IntervalPair]
+#var intervals: Array[IntervalDataClass]
+#var intervalsView: Array[IntervalViewClass]
+var current_goal: int
+var pattern1: Array[int] = [0, 2, 4, 0, 4, 6, 8, 0, 10]
+var repetition: int = 0  
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
+func prepareIntervals() -> void:
 	var pathLength = self.curve.get_baked_length()
-	var i1 = IntervalDataClass.new(0, 0, 5, Color.GREEN, pathLength)
-	var f1 = IntervalDataClass.new(fingerPos, fingerWidth, 10, Color.BLACK, pathLength)
-	var i2 = IntervalDataClass.new(0, 0, 5, Color.GREEN, pathLength)
 	
-	i1.recalculateInterval(0.0, f1.start_)
-	i2.recalculateInterval(f1.end_, 1.0)
+	var i1Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
+	var f1Data = IntervalDataClass.new(f1Pos, f1Width, Color.BLACK, pathLength)
+	var i2Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
+	var f2Data = IntervalDataClass.new(f2Pos, f2Width, Color.BLACK, pathLength)
+	var i3Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
+	var f3Data = IntervalDataClass.new(f3Pos, f3Width, Color.BLACK, pathLength)
+	var i4Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
+	var f4Data = IntervalDataClass.new(f4Pos, f4Width, Color.BLACK, pathLength)
+	var i5Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
+	var f5Data = IntervalDataClass.new(f5Pos, f5Width, Color.BLACK, pathLength)
+	var i6Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
 	
-	add_child(i1)
-	add_child(f1)
-	add_child(i2)
+	i1Data.recalculateInterval(0.0, f1Data.start_)
+	i2Data.recalculateInterval(f1Data.end_, f2Data.start_)
+	i3Data.recalculateInterval(f2Data.end_, f3Data.start_)
+	i4Data.recalculateInterval(f3Data.end_, f4Data.start_)
+	i5Data.recalculateInterval(f4Data.end_, f5Data.start_)
+	i6Data.recalculateInterval(f5Data.end_, 1.0)
+	
+	var i1View = IntervalViewClass.new(i1Data)
+	var f1View = IntervalViewClass.new(f1Data)
+	var i2View = IntervalViewClass.new(i2Data)
+	var f2View = IntervalViewClass.new(f2Data)
+	var i3View = IntervalViewClass.new(i3Data)
+	var f3View = IntervalViewClass.new(f3Data)
+	var i4View = IntervalViewClass.new(i4Data)
+	var f4View = IntervalViewClass.new(f4Data)
+	var i5View = IntervalViewClass.new(i5Data)
+	var f5View = IntervalViewClass.new(f5Data)
+	var i6View = IntervalViewClass.new(i6Data)
+	
+	add_child(i1View)
+	add_child(f1View)
+	add_child(i2View)
+	add_child(f2View)
+	add_child(i3View)
+	add_child(f3View)
+	add_child(i4View)
+	add_child(f4View)
+	add_child(i5View)
+	add_child(f5View)
+	add_child(i6View)
+	
+	var i1 = IntervalPair.new(i1Data, i1View)
+	var f1 = IntervalPair.new(f1Data, f1View)
+	var i2 = IntervalPair.new(i2Data, i2View)
+	var f2 = IntervalPair.new(f2Data, f2View)
+	var i3 = IntervalPair.new(i3Data, i3View)
+	var f3 = IntervalPair.new(f3Data, f3View)
+	var i4 = IntervalPair.new(i4Data, i4View)
+	var f4 = IntervalPair.new(f4Data, f4View)
+	var i5 = IntervalPair.new(i5Data, i5View)
+	var f5 = IntervalPair.new(f5Data, f5View)
+	var i6 = IntervalPair.new(i6Data, i6View)
 	
 	intervals.append(i1)
 	intervals.append(f1)
 	intervals.append(i2)
-	
-	
-func getInterval() -> IntervalDataClass:
-	var tmpT = t
-	for interval in intervals:
-		if tmpT - interval.width_ < 0:
-			return interval
-		tmpT -= interval.width_
-	return null
+	intervals.append(f2)
+	intervals.append(i3)
+	intervals.append(f3)
+	intervals.append(i4)
+	intervals.append(f4)
+	intervals.append(i5)
+	intervals.append(f5)
+	intervals.append(i6)
 
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	prepareIntervals()
+	current_goal = 0
+	activateInterval(current_goal)
+	
+	
+func getInterval() -> int:
+	var tmpT = t
+	for i in intervals.size():
+		if tmpT - intervals[i].data_.width_ < 0:
+			return i
+		tmpT -= intervals[i].data_.width_
+	return -1
+
+func activateInterval(i: int) -> void:
+	intervals[i].data_.color_ = Color.GREEN
+	intervals[i].view_.redrawPolygon()
+	intervals[i].view_.reposition()
+	
+func deactivateInterval(i: int) -> void:
+	intervals[i].data_.color_ = Color.GRAY
+	intervals[i].view_.redrawPolygon()
+	intervals[i].view_.reposition()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	intervals[1].data_.recalculatePoint(f1Pos, f1Width)
+	intervals[3].data_.recalculatePoint(f2Pos, f2Width)
+	intervals[5].data_.recalculatePoint(f3Pos, f3Width)
+	intervals[7].data_.recalculatePoint(f4Pos, f4Width)
+	intervals[9].data_.recalculatePoint(f5Pos, f5Width)
+	
+
+	intervals[0].data_.recalculateInterval(0.0, intervals[1].data_.start_)
+	intervals[2].data_.recalculateInterval(intervals[1].data_.end_, intervals[3].data_.start_)
+	intervals[4].data_.recalculateInterval(intervals[3].data_.end_, intervals[5].data_.start_)
+	intervals[6].data_.recalculateInterval(intervals[5].data_.end_, intervals[7].data_.start_)
+	intervals[8].data_.recalculateInterval(intervals[7].data_.end_, intervals[9].data_.start_)
+	intervals[10].data_.recalculateInterval(intervals[9].data_.end_, 1.0)
+	
+	for interval in intervals:
+		interval.view_.redrawPolygon()
+		interval.view_.reposition()
+		
+		
 	if Input.is_action_just_pressed("ui_accept"):
-		var interval = getInterval()
-		interval.polygon_.color = Color.BLUE
-	t += delta * 0.5
+		var idx = getInterval()
+		if idx == pattern1[current_goal]:
+			deactivateInterval(idx)
+			current_goal += 1
+			if current_goal == pattern1.size():
+				repetition +=1
+				current_goal = 0
+			
+			if pattern1[current_goal] < idx:
+				cursorDir = -1
+			else:
+				cursorDir = 1
+			
+			activateInterval(pattern1[current_goal])
+		
+	t += cursorDir * delta * 0.5
 	if (t > 1.0):
-		t -= 1.0
-		for interval in intervals:
-			interval.polygon_.color = interval.color_
+		t=1
+		cursorDir *= -1.0
+		for i in intervals.size():
+			if i%2 == 0:
+				intervals[i].view_.polygon_.color = Color.GRAY
+			else:
+				intervals[i].view_.polygon_.color = Color.BLACK
+				
+		activateInterval(pattern1[current_goal])
+	if (t < 0.0):
+		t=0
+		cursorDir *= -1.0
+		for i in intervals.size():
+			if i%2 == 0:
+				intervals[i].view_.polygon_.color = Color.GRAY
+			else:
+				intervals[i].view_.polygon_.color = Color.BLACK
+				
+		activateInterval(pattern1[current_goal])
+			
 	cursorPathFollow.progress_ratio = t
-	intervals[1].recalculatePoint(fingerPos, fingerWidth)
-	intervals[0].recalculateInterval(0.0, intervals[1].start_)
-	intervals[2].recalculateInterval(intervals[1].end_, 1.0)
