@@ -18,6 +18,7 @@ var flyWidth_: float = 1.0
 var flyWidthPx_: float = 1.0
 var flyHalfWidthPx_: float = 1.0
 var flyColor_: Color = Color.BLUE
+var lives_: int = 2
 
 var scoreMultiplier_: float = 1.0
 var neutralScoreColor_: Color = Color.GREEN
