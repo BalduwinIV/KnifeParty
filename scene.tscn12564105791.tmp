@@ -1,12 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://dfv472i7y6u0o"]
+[gd_scene load_steps=9 format=3 uid="uid://dfv472i7y6u0o"]
 
 [ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
 [ext_resource type="PackedScene" uid="uid://dd2lgqk0vj6l" path="res://KnifeCurve.tscn" id="2_3253y"]
-[ext_resource type="Script" uid="uid://b7plahsqibqlo" path="res://KnifePath.gd" id="3_m7jmp"]
-[ext_resource type="Texture2D" uid="uid://sd5n7hbp7d3x" path="res://resources/images/knife.png" id="4_u3cyc"]
-[ext_resource type="AudioStream" uid="uid://cqh2awkjma13e" path="res://resources/sound/tree_cut.mp3" id="5_y2354"]
-[ext_resource type="AudioStream" uid="uid://c2rvp8i0ytwsp" path="res://resources/sound/pain.mp3" id="6_ni31j"]
-[ext_resource type="Texture2D" uid="uid://c2w6wtcdl702" path="res://resources/images/hand.png" id="6_y2354"]
+[ext_resource type="Script" path="res://KnifePath.gd" id="3_m7jmp"]
+[ext_resource type="Texture2D" path="res://resources/images/knife.png" id="4_u3cyc"]
 
 [sub_resource type="Curve2D" id="Curve2D_3253y"]
 bake_interval = 0.01
@@ -34,12 +31,21 @@ point_count = 3
 position = Vector2(60, 50)
 curve = SubResource("Curve2D_3253y")
 script = ExtResource("1_ulcgi")
-scoreLabel = NodePath("../ScoreLabel")
+t = null
+cursorWidth = null
+cursorHeight = null
 f1Pos = 0.12
+f1Width = null
+f2Pos = null
 f2Width = 0.056
+f3Pos = null
 f3Width = 0.058
+f4Pos = null
 f4Width = 0.064
+f5Pos = null
 f5Width = 0.04
+cursorDir = null
+scoreLabel = NodePath("../ScoreLabel")
 
 [node name="ScoreLabel" type="Label" parent="."]
 offset_left = 1154.0
@@ -52,7 +58,6 @@ horizontal_alignment = 2
 vertical_alignment = 1
 
 [node name="KnifeCurve" parent="." instance=ExtResource("2_3253y")]
-visible = true
 
 [node name="Path2D3" type="Path2D" parent="KnifeCurve"]
 material = SubResource("CanvasItemMaterial_m7jmp")
@@ -69,16 +74,3 @@ script = ExtResource("3_m7jmp")
 rotation = -0.73481816
 scale = Vector2(0.92692137, 0.9130993)
 texture = ExtResource("4_u3cyc")
-
-[node name="AudioKnifeInterval" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("5_y2354")
-
-[node name="AudioKnifeFinger" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("6_ni31j")
-
-[node name="Node2D" type="Node2D" parent="."]
-
-[node name="Sprite2D" type="Sprite2D" parent="Node2D"]
-position = Vector2(179.00003, 586)
-rotation = 0.32612
-texture = ExtResource("6_y2354")

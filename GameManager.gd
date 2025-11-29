@@ -120,6 +120,7 @@ func _ready() -> void:
 	drawIntervals()
 	$"../KnifeCurve/Path2D2/PathFollow2D".reposition(0)
 	
+	
 func getInterval() -> int:
 	var tmpT = cursor.data_.pos_
 	for i in intervals.size():
@@ -142,12 +143,12 @@ func addScorePoints(dScore: float) -> void:
 
 func updateScoreLabel() -> void:
 	scoreLabel.text = str(score)
-
+	
 func redrawFinger(idx: int) -> void:
 	intervals[idx].view_.redrawLeftPolygon(intervals[idx].data_.color_)
 	intervals[idx].view_.redrawRightPolygon(intervals[idx].data_.color_)
 	intervals[idx].view_.reposition()
-
+	
 func redrawInterval(idx: int) -> void:
 	var leftColor: Color
 	var rightColor: Color
@@ -156,7 +157,7 @@ func redrawInterval(idx: int) -> void:
 		leftColor = intervals[idx - 1].data_.getInterpolatedColor(isActive)
 	else:
 		leftColor = intervals[idx + 1].data_.getInterpolatedColor(isActive)
-
+		
 	if idx < intervals.size() - 1:
 		rightColor = intervals[idx + 1].data_.getInterpolatedColor(isActive)
 	else:
@@ -187,15 +188,13 @@ func _process(delta: float) -> void:
 	intervals[6].data_.recalculateInterval(intervals[5].data_.end_, intervals[7].data_.start_)
 	intervals[8].data_.recalculateInterval(intervals[7].data_.end_, intervals[9].data_.start_)
 	intervals[10].data_.recalculateInterval(intervals[9].data_.end_, 1.0)
-
+	
 	if Input.is_action_just_pressed("ui_accept"):
-
 		var idx = getInterval()
 		if idx%2 == 0:
 			$"../AudioKnifeInterval".play()
 		else:
 			$"../AudioKnifeFinger".play()
-
 		if idx == pattern1[current_goal]:
 			var offset = getOffsetInsideInterval()
 			var scoreInc: float
@@ -223,9 +222,9 @@ func _process(delta: float) -> void:
 				cursorDir = -1
 			else:
 				cursorDir = 1
-
+	
 	drawIntervals()
-
+	
 	cursor.data_.pos_ += cursorDir * delta * 0.5
 	if (cursor.data_.pos_ > 1.0):
 		cursor.data_.pos_ = 1.0
@@ -233,14 +232,6 @@ func _process(delta: float) -> void:
 	elif (cursor.data_.pos_ < 0.0):
 		cursor.data_.pos_ = 0.0
 		cursorDir *= -1.0
-		for i in intervals.size():
-			if i%2 == 0:
-				intervals[i].view_.polygon_.color = Color.GRAY
-			else:
-				intervals[i].view_.polygon_.color = Color.BLACK
-				
-		activateInterval(pattern1[current_goal])
-			
+	
 	cursor.view_.reposition()
-	if !($"../KnifeCurve/Path2D2/PathFollow2D".is_jumping):
-		$"../KnifeCurve/Path2D2/PathFollow2D".reposition(cursor.data_.pos_)
+	$"../KnifeCurve/Path2D3/PathFollow2D".reposition(cursor.data_.pos_)

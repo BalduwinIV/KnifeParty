@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfv472i7y6u0o"]
+
+[ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
+
+[sub_resource type="Curve2D" id="Curve2D_3253y"]
+bake_interval = 0.01
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1160, 0)
+}
+point_count = 2
+
+[sub_resource type="LabelSettings" id="LabelSettings_ulcgi"]
+font_size = 32
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Scene" type="Node2D"]
+
+[node name="Path2D" type="Path2D" parent="." node_paths=PackedStringArray("scoreLabel")]
+position = Vector2(60, 50)
+curve = SubResource("Curve2D_3253y")
+script = ExtResource("1_ulcgi")
+t = null
+scoreLabel = NodePath("../ScoreLabel")
+cursorWidth = null
+cursorHeight = null
+f1Pos = 0.12
+f1Width = null
+f2Pos = null
+f2Width = 0.056
+f3Pos = null
+f3Width = 0.058
+f4Pos = null
+f4Width = 0.064
+f5Pos = null
+f5Width = 0.04
+cursorDir = null
+
+[node name="ScoreLabel" type="Label" parent="."]
+offset_left = 1154.0
+offset_top = 657.0
+offset_right = 1263.0
+offset_bottom = 702.0
+text = "0"
+label_settings = SubResource("LabelSettings_ulcgi")
+horizontal_alignment = 2
+vertical_alignment = 1
