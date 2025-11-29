@@ -21,6 +21,14 @@ var polygonFlyAnimationTween: Tween = null
 var polygonFlyAnimationDuration: float = 0.1
 var flyAnimationInProcess_: bool = false
 
+var animationMovementAmountY: float = 10.0
+var animationBounceOverheadY: float = 2.0
+var animationFingerPulseColor: Color = Color.RED
+var animationFingerPulseStrength: float = 0.5
+var animationFingerMoveDuration: float = 0.05
+var animationFingerPulseDuration: float = 0.1
+var animationFingerBounceDuration: float = 0.05
+
 
 func initPolygonPoints():
 	polygonLeftPoints_ = PackedVector2Array()
@@ -133,6 +141,55 @@ func startAnimationFly() -> void:
 		polygonFly_, "scale", Vector2(1.0, 1.0), polygonFlyAnimationDuration
 	).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
 	polygonFlyAnimationTween.connect("finished", Callable(self, "onAnimationFlyFinished"))
+	
+func startFingerAnimation() -> void:
+	if polygonRightAnimationTween and polygonRightAnimationTween.is_valid():
+		polygonRightAnimationTween.kill()
+	if polygonLeftAnimationTween and polygonLeftAnimationTween.is_valid():
+		polygonLeftAnimationTween.kill()
+		
+	polygonLeftAnimationTween = create_tween()
+	polygonRightAnimationTween = create_tween()
+	
+	var startY = 0
+	var yTop = -animationMovementAmountY
+	var yBottom = animationMovementAmountY
+	
+	var colorLeftTween = create_tween()
+	var colorRightTween = create_tween()
+	
+	pulse_color_tween(colorLeftTween, polygonLeft_, animationFingerPulseColor, animationFingerPulseDuration, 2)
+	pulse_color_tween(colorRightTween, polygonRight_, animationFingerPulseColor, animationFingerPulseDuration, 2)
+	
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", yBottom, animationFingerMoveDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", yBottom, animationFingerMoveDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", yTop, animationFingerMoveDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", yTop, animationFingerMoveDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY + animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY + animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY - animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY - animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+
+	# Then, spring back to the original position
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY, animationFingerBounceDuration).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY, animationFingerBounceDuration).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN_OUT)
+	# --- Final Cleanup ---
+	polygonLeftAnimationTween.connect("finished", Callable(self, "_on_complex_animation_finished"))
+	polygonRightAnimationTween.connect("finished", Callable(self, "_on_complex_animation_finished"))
+
+# Helper function to chain color pulses onto a tween
+func pulse_color_tween(tween: Tween, polygon: Polygon2D, color_to_tint: Color, duration_per_half: float, num_pulses: int):
+	# Calculate the tinted color
+	var tinted_color = int_data_.color_.lerp(color_to_tint, animationFingerPulseStrength)
+	
+	for i in range(num_pulses):
+		# Tint In
+		tween.tween_property(polygon, "modulate", tinted_color, duration_per_half).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		# Tint Out (back to original color)
+		tween.tween_property(polygon, "modulate", int_data_.color_, duration_per_half).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	
 func onAnimationFlyFinished():
 	hideFly()

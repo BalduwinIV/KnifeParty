@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://dfv472i7y6u0o"]
+[gd_scene load_steps=15 format=3 uid="uid://dfv472i7y6u0o"]
 
 [ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
+[ext_resource type="FontFile" uid="uid://bv2ojckt38w4p" path="res://resources/fonts/Averia_Serif_Libre,EB_Garamond/EB_Garamond/static/EBGaramond-Regular.ttf" id="2_73fnb"]
 [ext_resource type="PackedScene" uid="uid://dd2lgqk0vj6l" path="res://KnifeCurve.tscn" id="2_3253y"]
 [ext_resource type="Script" uid="uid://b7plahsqibqlo" path="res://KnifePath.gd" id="3_m7jmp"]
 [ext_resource type="Texture2D" uid="uid://sd5n7hbp7d3x" path="res://resources/images/knife.png" id="4_u3cyc"]
@@ -8,6 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://c2rvp8i0ytwsp" path="res://resources/sound/pain.mp3" id="6_ni31j"]
 [ext_resource type="Texture2D" uid="uid://c2w6wtcdl702" path="res://resources/images/hand.png" id="6_y2354"]
 [ext_resource type="PackedScene" uid="uid://bucgormj5env" path="res://gameOver.tscn" id="8_xlvrw"]
+[ext_resource type="Script" uid="uid://ccwmlgj2aclke" path="res://Score/ScoreManager.gd" id="10_5juve"]
 
 [sub_resource type="Curve2D" id="Curve2D_3253y"]
 bake_interval = 0.01
@@ -17,6 +19,7 @@ _data = {
 point_count = 2
 
 [sub_resource type="LabelSettings" id="LabelSettings_ulcgi"]
+font = ExtResource("2_73fnb")
 font_size = 32
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
@@ -36,6 +39,7 @@ position = Vector2(60, 50)
 curve = SubResource("Curve2D_3253y")
 script = ExtResource("1_ulcgi")
 scoreLabel = NodePath("../ScoreLabel")
+fingerColor = Color(1, 0.65534985, 0.601841, 1)
 f1Pos = 0.12
 f2Width = 0.056
 f3Width = 0.058
@@ -87,3 +91,8 @@ texture = ExtResource("6_y2354")
 
 [node name="GameOver" parent="." instance=ExtResource("8_xlvrw")]
 visible = false
+
+[node name="ScoreManagerNode" type="Node" parent="." node_paths=PackedStringArray("mainLabel")]
+script = ExtResource("10_5juve")
+mainLabel = NodePath("../ScoreLabel")
+font = ExtResource("2_73fnb")

@@ -7,7 +7,9 @@ var hitRegistered: bool = false
 @export var scoreLabel: Label;
 var score: float = 0.0
 var scoreStandartGain = 0.2
-var scorePopupManager: ScoreManagerClass
+@onready var scorePopupManager = $"../ScoreManagerNode"
+
+@export var fingerColor: Color = Color.BLACK
 
 @export_range(0.0, 0.1, 0.0001) var cursorWidth: float = 0.002
 @export_range(0.0, 30.0, 0.1) var cursorHeight: float = 20.0
@@ -55,15 +57,15 @@ func prepareIntervals() -> void:
 	cursor = CursorPairClass.new(cursorData, cursorView)
 	
 	var i1Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f1Data = IntervalDataClass.new(f1Pos, f1Width, Color.BLACK, pathLength)
+	var f1Data = IntervalDataClass.new(f1Pos, f1Width, fingerColor, pathLength)
 	var i2Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f2Data = IntervalDataClass.new(f2Pos, f2Width, Color.BLACK, pathLength)
+	var f2Data = IntervalDataClass.new(f2Pos, f2Width, fingerColor, pathLength)
 	var i3Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f3Data = IntervalDataClass.new(f3Pos, f3Width, Color.BLACK, pathLength)
+	var f3Data = IntervalDataClass.new(f3Pos, f3Width, fingerColor, pathLength)
 	var i4Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f4Data = IntervalDataClass.new(f4Pos, f4Width, Color.BLACK, pathLength)
+	var f4Data = IntervalDataClass.new(f4Pos, f4Width, fingerColor, pathLength)
 	var i5Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f5Data = IntervalDataClass.new(f5Pos, f5Width, Color.BLACK, pathLength)
+	var f5Data = IntervalDataClass.new(f5Pos, f5Width, fingerColor, pathLength)
 	var i6Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
 	
 	i1Data.recalculateInterval(0.0, f1Data.start_)
@@ -124,15 +126,16 @@ func prepareIntervals() -> void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	scorePopupManager = ScoreManagerClass.new(scoreLabel)
-	get_parent().add_child(scorePopupManager)
+	print(get_path())
+	print(get_parent())
 	prepareIntervals()
 	current_goal = 0
 	modificatorManager = ModificatorManager.new()
-	add_child(modificatorManager )
+	add_child(modificatorManager)
 	drawIntervals()
 	
 	$"../KnifeCurve/Path2D2/PathFollow2D".reposition(0)
+	scorePopupManager = $"../ScoreManagerNode"
 	
 	
 func getInterval(t: float) -> int:
@@ -245,6 +248,7 @@ func inPlayingPhase(delta: float):
 			$"../AudioKnifeInterval".play(0.15)
 		else: 
 			intervals[idx].data_.lives_ -= 1
+			intervals[idx].view_.startFingerAnimation()
 			if intervals[idx].data_.lives_ <= 0:
 				$"../GameOver".show()  
 				return
