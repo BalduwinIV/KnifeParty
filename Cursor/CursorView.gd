@@ -5,6 +5,9 @@ var cursorData_: CursorDataClass
 var polygon_: Polygon2D
 var polygonPoints_: PackedVector2Array
 
+var animationTween: Tween = null
+var animationDuration: float = 0.03
+
 func _init(cursorData: CursorDataClass) -> void:
 	cursorData_ = cursorData
 	initPolygonPoints()
@@ -35,3 +38,19 @@ func createPolygon():
 
 func reposition() -> void:
 	progress_ratio = cursorData_.pos_
+
+func start_animation() -> void:
+	if animationTween and animationTween.is_valid():
+		animationTween.kill()
+	
+	animationTween = create_tween()
+	animationTween.tween_property(
+		polygon_, "scale", Vector2(1.0, 0.5), animationDuration
+	).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_IN)
+	animationTween.tween_property(
+		polygon_, "scale", Vector2(1.0, 1.0), animationDuration
+	).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	animationTween.connect("finished", Callable(self, "onAnimationFinished"))
+	
+func onAnimationFinished():
+	pass

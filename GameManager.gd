@@ -1,12 +1,16 @@
 extends Path2D
 
+var justEnteredInteval = false
 @export var t: float = 0.0
+var hitPos: float = 0.0
+var hitRegistered: bool = false
 @export var scoreLabel: Label;
 var score: float = 0.0
 var scoreStandartGain = 0.2
+@onready var scorePopupManager = $"../ScorePopupsManager"
 
-@export_range(0.0, 0.1, 0.0001) var cursorWidth: float = 0.01
-@export_range(0.0, 30.0, 0.1) var cursorHeight: float = 15.0
+@export_range(0.0, 0.1, 0.0001) var cursorWidth: float = 0.002
+@export_range(0.0, 30.0, 0.1) var cursorHeight: float = 20.0
 
 # Finger 1
 @export_range(0.0, 1.0, 0.0025) var f1Pos: float = 0.1
@@ -31,11 +35,13 @@ var scoreStandartGain = 0.2
 #@export var cursorPathFollow: PathFollow2D;
 @export var cursorDir: float = 1.0
 
+@export var flySpawnChance: float = 0.1
+
 var intervals: Array[IntervalPair]
 var cursor: CursorPairClass
 var knifeCurve: KnifePath
 var current_goal: int
-var pattern1: Array[int] = [0, 2, 4, 0, 4, 6, 8, 0, 10]
+var pattern1: Array[int] = [0, 2, 4, 2, 4, 6, 4, 6, 8, 6, 8, 10, 8, 6, 8, 6, 4, 6, 4, 2, 4, 2]
 var repetition: int = 0  
 
 func prepareIntervals() -> void:
@@ -121,8 +127,8 @@ func _ready() -> void:
 	$"../KnifeCurve/Path2D2/PathFollow2D".reposition(0)
 	
 	
-func getInterval() -> int:
-	var tmpT = cursor.data_.pos_
+func getInterval(t: float) -> int:
+	var tmpT = t
 	for i in intervals.size():
 		if tmpT - intervals[i].data_.width_ < 0:
 			return i
@@ -140,6 +146,7 @@ func getOffsetInsideInterval() -> float:
 func addScorePoints(dScore: float) -> void:
 	score += dScore
 	updateScoreLabel()
+	scorePopupManager.spawnScorePopup(dScore)
 
 func updateScoreLabel() -> void:
 	scoreLabel.text = str(score)
@@ -172,6 +179,32 @@ func drawIntervals() -> void:
 			redrawFinger(i)
 		else:
 			redrawInterval(i)
+			
+func spawnFly() -> bool:
+	var randomValue: float = randf()
+	if randomValue < flySpawnChance:
+		return true
+	return false
+
+func _physics_process(delta: float) -> void:
+	cursor.data_.speed_ = calculateAdaptiveSpeed()
+	cursor.data_.pos_ += cursorDir * delta * cursor.data_.speed_
+	if Input.is_action_just_pressed("ui_accept"):
+		hitPos = cursor.data_.pos_
+		hitRegistered = true
+		
+		
+func onFlyAction() -> void:
+	addScorePoints(100)
+	cursor.data_.minSpeed_ = min(cursor.data_.minSpeed_ + 0.2, cursor.data_.maxSpeed_)
+	
+func calculateAdaptiveSpeed() -> float:
+	var currentInterval = intervals[pattern1[current_goal]]
+	var closestPoint = clamp(cursor.data_.pos_, currentInterval.data_.start_, currentInterval.data_.end_)
+	var distance = abs(cursor.data_.pos_ - closestPoint)
+	var factor = clamp(distance / cursor.data_.speedDetectionRange, 0.0, 1.0)
+	var adaptiveSpeed = lerp(cursor.data_.minSpeed_, cursor.data_.maxSpeed_, factor)
+	return adaptiveSpeed
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -180,7 +213,6 @@ func _process(delta: float) -> void:
 	intervals[5].data_.recalculatePoint(f3Pos, f3Width)
 	intervals[7].data_.recalculatePoint(f4Pos, f4Width)
 	intervals[9].data_.recalculatePoint(f5Pos, f5Width)
-	
 
 	intervals[0].data_.recalculateInterval(0.0, intervals[1].data_.start_)
 	intervals[2].data_.recalculateInterval(intervals[1].data_.end_, intervals[3].data_.start_)
@@ -188,13 +220,28 @@ func _process(delta: float) -> void:
 	intervals[6].data_.recalculateInterval(intervals[5].data_.end_, intervals[7].data_.start_)
 	intervals[8].data_.recalculateInterval(intervals[7].data_.end_, intervals[9].data_.start_)
 	intervals[10].data_.recalculateInterval(intervals[9].data_.end_, 1.0)
-	
-	if Input.is_action_just_pressed("ui_accept"):
-		var idx = getInterval()
+	var intId = getInterval(cursor.data_.pos_)
+	if intId % 2:
+		justEnteredInteval = true
+	else:
+		if justEnteredInteval:
+			justEnteredInteval = false
+			#$"../AudioKnifeInterval".play(0.15)
+	if hitRegistered:
+		hitRegistered = false
+		var idx = getInterval(hitPos)
+		cursor.view_.start_animation()
 		if idx%2 == 0:
-			$"../AudioKnifeInterval".play()
+			$"../AudioKnifeInterval".play(0.15)
 		else:
 			$"../AudioKnifeFinger".play()
+		if intervals[idx].data_.flyShow_:
+			if intervals[idx].data_.checkFlyHit(hitPos):
+				onFlyAction()
+				intervals[idx].view_.startAnimationFly()
+			else:
+				intervals[pattern1[current_goal]].view_.hideFly() # hide fly in interval
+			
 		if idx == pattern1[current_goal]:
 			var offset = getOffsetInsideInterval()
 			var scoreInc: float
@@ -205,6 +252,10 @@ func _process(delta: float) -> void:
 				else:
 					intervals[idx + 1].data_.addScoreMultiplier(scoreStandartGain)
 					scoreInc = intervals[idx + 1].data_.scoreMultiplier_
+				if not intervals[idx].view_.flyAnimationInProcess_:
+					if idx == intervals.size() - 1:
+						intervals[idx].view_.startAnimationRight()
+					intervals[idx].view_.startAnimationLeft()
 			else:
 				if (idx < intervals.size() - 1):
 					intervals[idx + 1].data_.addScoreMultiplier(scoreStandartGain)
@@ -212,20 +263,33 @@ func _process(delta: float) -> void:
 				else:
 					intervals[idx - 1].data_.addScoreMultiplier(scoreStandartGain)
 					scoreInc = intervals[idx - 1].data_.scoreMultiplier_
+				if not intervals[idx].view_.flyAnimationInProcess_:
+					if idx == 0:
+						intervals[idx].view_.startAnimationLeft()
+					intervals[idx].view_.startAnimationRight()
 			addScorePoints(scoreInc)
+			
 			current_goal += 1
 			if current_goal == pattern1.size():
 				repetition +=1
 				current_goal = 0
+				
+			if spawnFly(): # spawn fly
+				var interval = intervals[pattern1[current_goal]]
+				interval.data_.setUpFly(randf_range(0.3, 0.7), randf_range(0.005, 0.02), Color.BLUE)
+				interval.view_.drawFly()
 			
 			if pattern1[current_goal] < idx:
 				cursorDir = -1
 			else:
 				cursorDir = 1
-	
+		else:
+			if idx % 2:
+				addScorePoints(-5.0)
+			else:
+				addScorePoints(-0.5)
 	drawIntervals()
 	
-	cursor.data_.pos_ += cursorDir * delta * 0.5
 	if (cursor.data_.pos_ > 1.0):
 		cursor.data_.pos_ = 1.0
 		cursorDir *= -1.0

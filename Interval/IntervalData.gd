@@ -12,6 +12,13 @@ var pathLength_: float
 var widthPx_: float
 var halfWidthPx_: float
 
+var flyShow_: bool = false
+var flyPos_: float = 0.0
+var flyWidth_: float = 1.0
+var flyWidthPx_: float = 1.0
+var flyHalfWidthPx_: float = 1.0
+var flyColor_: Color = Color.BLUE
+
 var scoreMultiplier_: float = 1.0
 var neutralScoreColor_: Color = Color.GREEN
 var lowScoreColor_: Color = Color.RED
@@ -53,6 +60,22 @@ func recalculatePoint(center: float, width: float) -> void:
 	widthPx_ = pathLength_ * width_
 	halfWidthPx_ = widthPx_ * 0.5
 
+func setUpFly(pos: float, width: float, color: Color) -> void:
+	flyPos_ = pos
+	flyWidth_ = width
+	flyWidthPx_ = pathLength_ * width
+	flyHalfWidthPx_ = flyWidthPx_ * 0.5
+	flyColor_ = color
+	flyShow_ = false
+
+func checkFlyHit(hitPosAbs: float) -> bool:
+	var flyHalfWidth = (flyWidth_ * 0.5)
+	var flyStart = center_ - flyHalfWidth
+	var flyEnd = center_ + flyHalfWidth
+	if flyStart <= hitPosAbs and hitPosAbs <= flyEnd     :
+		return true
+	return false
+
 func setScoreMultiplier(value: float):
 	scoreMultiplier_ = value
 	
@@ -63,7 +86,6 @@ func multScoreMultiplier(value: float):
 	scoreMultiplier_ *= value
 
 func getInterpolatedColor(active: bool) -> Color:
-	#if active: # interval is active
 	if is_equal_approx(scoreMultiplier_, 1.0):
 		if active:
 			return neutralScoreColor_
@@ -80,12 +102,3 @@ func getInterpolatedColor(active: bool) -> Color:
 		if active:
 			return finalColor
 		return finalColor.darkened(inactiveDarknedValue)
-	#else:
-		#if is_equal_approx(scoreMultiplier_, 1.0):
-			#return neutralScoreColorInactive_
-		#elif scoreMultiplier_ > 1.0:
-			#var factor = clamp((scoreMultiplier_ - 1.0) / (HIGH_BOUNDARY - 1.0), 0.0, 1.0)
-			#return neutralScoreColorInactive_.lerp(highScoreColorInactive_, factor)
-		#else: # scoreMultiplier_ < 1.0
-			#var factor = clamp((1.0 - scoreMultiplier_) / (1.0 - LOW_BOUNDARY), 0.0, 1.0)
-			#return neutralScoreColorInactive_.lerp(lowScoreColorInactive_, factor)

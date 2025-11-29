@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dfv472i7y6u0o"]
+[gd_scene load_steps=13 format=3 uid="uid://dfv472i7y6u0o"]
 
 [ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
 [ext_resource type="PackedScene" uid="uid://dd2lgqk0vj6l" path="res://KnifeCurve.tscn" id="2_3253y"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://cqh2awkjma13e" path="res://resources/sound/tree_cut.mp3" id="5_y2354"]
 [ext_resource type="AudioStream" uid="uid://c2rvp8i0ytwsp" path="res://resources/sound/pain.mp3" id="6_ni31j"]
 [ext_resource type="Texture2D" uid="uid://c2w6wtcdl702" path="res://resources/images/hand.png" id="6_y2354"]
+[ext_resource type="Script" uid="uid://ccwmlgj2aclke" path="res://Score/ScoreManager.gd" id="8_xlvrw"]
 
 [sub_resource type="Curve2D" id="Curve2D_3253y"]
 bake_interval = 0.01
@@ -42,10 +43,11 @@ f4Width = 0.064
 f5Width = 0.04
 
 [node name="ScoreLabel" type="Label" parent="."]
-offset_left = 1154.0
+offset_left = 538.0
 offset_top = 657.0
-offset_right = 1263.0
+offset_right = 1264.0
 offset_bottom = 702.0
+pivot_offset = Vector2(726, 0)
 text = "0"
 label_settings = SubResource("LabelSettings_ulcgi")
 horizontal_alignment = 2
@@ -82,3 +84,7 @@ stream = ExtResource("6_ni31j")
 position = Vector2(179.00003, 586)
 rotation = 0.32612
 texture = ExtResource("6_y2354")
+
+[node name="ScorePopupsManager" type="Node" parent="." node_paths=PackedStringArray("mainLabel")]
+script = ExtResource("8_xlvrw")
+mainLabel = NodePath("../ScoreLabel")
