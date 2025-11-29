@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dt13h2jcyurim"
+path="res://.godot/imported/Рубка дерева (mp3cut.net).mp3-1a19e74c8d8cd28bb3d40e96ec833072.mp3str"
+
+[deps]
+
+source_file="res://resources/sounds/Рубка дерева (mp3cut.net).mp3"
+dest_files=["res://.godot/imported/Рубка дерева (mp3cut.net).mp3-1a19e74c8d8cd28bb3d40e96ec833072.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

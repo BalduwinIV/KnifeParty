@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://dw5h7dgr3x50t"]
+
+[ext_resource type="Script" uid="uid://dqth7tbs2jssi" path="res://KnifePath.gd" id="1_ca7ce"]
+[ext_resource type="Texture2D" uid="uid://bnbn24wmll5wl" path="res://resources/images/knife.png" id="2_ca7ce"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_gfec6"]
+
+[sub_resource type="Curve2D" id="Curve2D_y6wnu"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 79, 189, -99, -104, 99, 104, 312, 236, 0, 0, 0, 0, 386, 453)
+}
+point_count = 3
+
+[node name="KnifeCurve" type="Node2D"]
+
+[node name="Path2D2" type="Path2D" parent="."]
+material = SubResource("CanvasItemMaterial_gfec6")
+position = Vector2(47, 35)
+curve = SubResource("Curve2D_y6wnu")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D2"]
+position = Vector2(79, 189)
+rotation = -0.40218666
+rotates = false
+script = ExtResource("1_ca7ce")
+
+[node name="Sprite2D" type="Sprite2D" parent="Path2D2/PathFollow2D"]
+rotation = -0.73481816
+scale = Vector2(0.92692137, 0.9130993)
+texture = ExtResource("2_ca7ce")

@@ -1,6 +1,11 @@
 [gd_scene load_steps=4 format=3 uid="uid://dfv472i7y6u0o"]
 
 [ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
+[ext_resource type="PackedScene" uid="uid://dw5h7dgr3x50t" path="res://KnifeCurve.tscn" id="2_3253y"]
+[ext_resource type="AudioStream" uid="uid://dt13h2jcyurim" path="res://resources/sounds/Рубка дерева (mp3cut.net).mp3" id="5_y2354"]
+[ext_resource type="Script" uid="uid://w58blqgfp7du" path="res://KnifeSound.gd" id="6_ni31j"]
+[ext_resource type="Texture2D" uid="uid://o640kme063k8" path="res://resources/images/hand.png" id="6_y2354"]
+[ext_resource type="AudioStream" uid="uid://mb6bctwjiq0q" path="res://resources/sounds/pain.mp3" id="7_ni31j"]
 
 [sub_resource type="Curve2D" id="Curve2D_3253y"]
 bake_interval = 0.01
@@ -18,6 +23,15 @@ outline_color = Color(0, 0, 0, 1)
 
 [node name="Path2D" type="Path2D" parent="." node_paths=PackedStringArray("scoreLabel")]
 position = Vector2(60, 50)
+[node name="Hand" type="Node" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Hand"]
+position = Vector2(190.00002, 463)
+rotation = 0.71110183
+texture = ExtResource("6_y2354")
+
+[node name="Path2D" type="Path2D" parent="."]
+position = Vector2(50, 50)
 curve = SubResource("Curve2D_3253y")
 script = ExtResource("1_ulcgi")
 scoreLabel = NodePath("../ScoreLabel")
@@ -36,3 +50,19 @@ text = "0"
 label_settings = SubResource("LabelSettings_ulcgi")
 horizontal_alignment = 2
 vertical_alignment = 1
+
+[node name="KnifeCurve" parent="." instance=ExtResource("2_3253y")]
+
+[node name="Path2D3" type="Path2D" parent="KnifeCurve"]
+visible = false
+material = SubResource("CanvasItemMaterial_u3cyc")
+position = Vector2(47, 35)
+scale = Vector2(1.2000003, 1)
+curve = SubResource("Curve2D_m7jmp")
+
+[node name="AudioKnifeInterval" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_y2354")
+script = ExtResource("6_ni31j")
+
+[node name="AudioKnifeFinger" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_ni31j")
