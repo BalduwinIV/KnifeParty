@@ -9,12 +9,9 @@
 [ext_resource type="AudioStream" uid="uid://c2rvp8i0ytwsp" path="res://resources/sound/pain.mp3" id="6_ni31j"]
 [ext_resource type="Texture2D" uid="uid://idlirhosw8g5" path="res://resources/images/hand(2).png" id="7_fy5k1"]
 [ext_resource type="PackedScene" uid="uid://bucgormj5env" path="res://gameOver.tscn" id="8_xlvrw"]
-<<<<<<< HEAD
 [ext_resource type="Script" uid="uid://ccwmlgj2aclke" path="res://Score/ScoreManager.gd" id="10_5juve"]
-=======
 [ext_resource type="AudioStream" uid="uid://d25sjfpfj2nx3" path="res://resources/sound/Culture_Beat_-_Mr._Vain_Instrumental_Version_(mp3.pm).mp3" id="9_5c1cw"]
 [ext_resource type="Texture2D" uid="uid://ugcd270t76um" path="res://resources/images/background.jpeg" id="10_akxrc"]
->>>>>>> e841ba3b6b0d8a2006b90554e1f229d23b158e20
 
 [sub_resource type="Curve2D" id="Curve2D_3253y"]
 bake_interval = 0.01
