@@ -2,6 +2,9 @@ extends Path2D
 
 @export var t: float = 0.0
 
+@export_range(0.0, 0.1, 0.0001) var cursorWidth: float = 0.01
+@export_range(0.0, 30.0, 0.1) var cursorHeight: float = 15.0
+
 # Finger 1
 @export_range(0.0, 1.0, 0.0025) var f1Pos: float = 0.1
 @export_range(0.0, 0.2, 0.001) var f1Width: float = 0.07
@@ -22,18 +25,22 @@ extends Path2D
 @export_range(0.0, 1.0, 0.0025) var f5Pos: float = 0.9
 @export_range(0.0, 0.2, 0.001) var f5Width: float = 0.05
 
-@export var cursorPathFollow: PathFollow2D;
+#@export var cursorPathFollow: PathFollow2D;
 @export var cursorDir: float = 1.0
 
 var intervals: Array[IntervalPair]
-#var intervals: Array[IntervalDataClass]
-#var intervalsView: Array[IntervalViewClass]
+var cursor: CursorPairClass
 var current_goal: int
 var pattern1: Array[int] = [0, 2, 4, 0, 4, 6, 8, 0, 10]
 var repetition: int = 0  
 
 func prepareIntervals() -> void:
 	var pathLength = self.curve.get_baked_length()
+	
+	var cursorData = CursorDataClass.new(cursorWidth, cursorHeight, pathLength, Color.WHITE)
+	var cursorView = CursorViewClass.new(cursorData)
+	add_child(cursorView)
+	cursor = CursorPairClass.new(cursorData, cursorView)
 	
 	var i1Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
 	var f1Data = IntervalDataClass.new(f1Pos, f1Width, Color.BLACK, pathLength)
@@ -110,7 +117,7 @@ func _ready() -> void:
 	
 	
 func getInterval() -> int:
-	var tmpT = t
+	var tmpT = cursor.data_.pos_
 	for i in intervals.size():
 		if tmpT - intervals[i].data_.width_ < 0:
 			return i
@@ -164,9 +171,9 @@ func _process(delta: float) -> void:
 			
 			activateInterval(pattern1[current_goal])
 		
-	t += cursorDir * delta * 0.5
-	if (t > 1.0):
-		t=1
+	cursor.data_.pos_ += cursorDir * delta * 0.5
+	if (cursor.data_.pos_ > 1.0):
+		cursor.data_.pos_ = 1.0
 		cursorDir *= -1.0
 		for i in intervals.size():
 			if i%2 == 0:
@@ -175,8 +182,8 @@ func _process(delta: float) -> void:
 				intervals[i].view_.polygon_.color = Color.BLACK
 				
 		activateInterval(pattern1[current_goal])
-	if (t < 0.0):
-		t=0
+	if (cursor.data_.pos_ < 0.0):
+		cursor.data_.pos_ = 0.0
 		cursorDir *= -1.0
 		for i in intervals.size():
 			if i%2 == 0:
@@ -186,4 +193,4 @@ func _process(delta: float) -> void:
 				
 		activateInterval(pattern1[current_goal])
 			
-	cursorPathFollow.progress_ratio = t
+	cursor.view_.reposition()

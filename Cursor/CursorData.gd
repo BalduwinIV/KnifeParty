@@ -5,7 +5,20 @@ var pos_: float = 0.0
 var width_: float
 var height_: float
 var widthPx_: float
+var halfWidthPx_: float
+var pathLength_: float
 var speed_: float = 1.0
+var color_: Color
 
-func _init(pos: float) -> void:
-	pos_ = pos
+func _init(width: float, height: float, pathLength: float, color: Color) -> void:
+	width_ = width
+	height_ = height
+	pathLength_ = pathLength
+	color_ = color
+	widthPx_ = pathLength * width
+	halfWidthPx_ = widthPx_ * 0.5
+
+func recalculate(width: float) -> void:
+	width_ = width
+	widthPx_ = pathLength_ * width
+	halfWidthPx_ = widthPx_ * 0.5

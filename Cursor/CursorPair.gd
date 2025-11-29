@@ -1,11 +1,9 @@
-extends Node
+class_name CursorPairClass
+extends RefCounted
 
+var data_: CursorDataClass
+var view_: CursorViewClass
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _init(data: CursorDataClass, view: CursorViewClass) -> void:
+	data_ = data
+	view_ = view
