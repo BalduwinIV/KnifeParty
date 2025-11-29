@@ -1,6 +1,9 @@
 extends Path2D
 
 @export var t: float = 0.0
+@export var scoreLabel: Label;
+var score: float = 0.0
+var scoreStandartGain = 0.2
 
 @export_range(0.0, 0.1, 0.0001) var cursorWidth: float = 0.01
 @export_range(0.0, 30.0, 0.1) var cursorHeight: float = 15.0
@@ -113,7 +116,7 @@ func prepareIntervals() -> void:
 func _ready() -> void:
 	prepareIntervals()
 	current_goal = 0
-	activateInterval(current_goal)
+	drawIntervals()
 	
 	
 func getInterval() -> int:
@@ -124,15 +127,49 @@ func getInterval() -> int:
 		tmpT -= intervals[i].data_.width_
 	return -1
 
-func activateInterval(i: int) -> void:
-	intervals[i].data_.color_ = Color.GREEN
-	intervals[i].view_.redrawPolygon()
-	intervals[i].view_.reposition()
+func getOffsetInsideInterval() -> float:
+	var tmpT = cursor.data_.pos_
+	for i in intervals.size():
+		if tmpT - intervals[i].data_.width_ < 0:
+			return tmpT / intervals[i].data_.width_
+		tmpT -= intervals[i].data_.width_
+	return -1
 	
-func deactivateInterval(i: int) -> void:
-	intervals[i].data_.color_ = Color.GRAY
-	intervals[i].view_.redrawPolygon()
-	intervals[i].view_.reposition()
+func addScorePoints(dScore: float) -> void:
+	score += dScore
+	updateScoreLabel()
+
+func updateScoreLabel() -> void:
+	scoreLabel.text = str(score)
+	
+func redrawFinger(idx: int) -> void:
+	intervals[idx].view_.redrawLeftPolygon(intervals[idx].data_.color_)
+	intervals[idx].view_.redrawRightPolygon(intervals[idx].data_.color_)
+	intervals[idx].view_.reposition()
+	
+func redrawInterval(idx: int) -> void:
+	var leftColor: Color
+	var rightColor: Color
+	var isActive = idx == pattern1[current_goal]
+	if idx > 0:
+		leftColor = intervals[idx - 1].data_.getInterpolatedColor(isActive)
+	else:
+		leftColor = intervals[idx + 1].data_.getInterpolatedColor(isActive)
+		
+	if idx < intervals.size() - 1:
+		rightColor = intervals[idx + 1].data_.getInterpolatedColor(isActive)
+	else:
+		rightColor = leftColor
+	intervals[idx].view_.redrawLeftPolygon(leftColor)
+	intervals[idx].view_.redrawRightPolygon(rightColor)
+	intervals[idx].view_.reposition()
+
+func drawIntervals() -> void:
+	for i in range(intervals.size()):
+		if i % 2:
+			redrawFinger(i)
+		else:
+			redrawInterval(i)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -150,15 +187,26 @@ func _process(delta: float) -> void:
 	intervals[8].data_.recalculateInterval(intervals[7].data_.end_, intervals[9].data_.start_)
 	intervals[10].data_.recalculateInterval(intervals[9].data_.end_, 1.0)
 	
-	for interval in intervals:
-		interval.view_.redrawPolygon()
-		interval.view_.reposition()
-		
-		
 	if Input.is_action_just_pressed("ui_accept"):
 		var idx = getInterval()
 		if idx == pattern1[current_goal]:
-			deactivateInterval(idx)
+			var offset = getOffsetInsideInterval()
+			var scoreInc: float
+			if (offset < 0.5):
+				if (idx > 0):
+					intervals[idx - 1].data_.addScoreMultiplier(scoreStandartGain)
+					scoreInc = intervals[idx - 1].data_.scoreMultiplier_
+				else:
+					intervals[idx + 1].data_.addScoreMultiplier(scoreStandartGain)
+					scoreInc = intervals[idx + 1].data_.scoreMultiplier_
+			else:
+				if (idx < intervals.size() - 1):
+					intervals[idx + 1].data_.addScoreMultiplier(scoreStandartGain)
+					scoreInc = intervals[idx + 1].data_.scoreMultiplier_
+				else:
+					intervals[idx - 1].data_.addScoreMultiplier(scoreStandartGain)
+					scoreInc = intervals[idx - 1].data_.scoreMultiplier_
+			addScorePoints(scoreInc)
 			current_goal += 1
 			if current_goal == pattern1.size():
 				repetition +=1
@@ -168,29 +216,15 @@ func _process(delta: float) -> void:
 				cursorDir = -1
 			else:
 				cursorDir = 1
-			
-			activateInterval(pattern1[current_goal])
-		
+	
+	drawIntervals()
+	
 	cursor.data_.pos_ += cursorDir * delta * 0.5
 	if (cursor.data_.pos_ > 1.0):
 		cursor.data_.pos_ = 1.0
 		cursorDir *= -1.0
-		for i in intervals.size():
-			if i%2 == 0:
-				intervals[i].view_.polygon_.color = Color.GRAY
-			else:
-				intervals[i].view_.polygon_.color = Color.BLACK
-				
-		activateInterval(pattern1[current_goal])
-	if (cursor.data_.pos_ < 0.0):
+	elif (cursor.data_.pos_ < 0.0):
 		cursor.data_.pos_ = 0.0
 		cursorDir *= -1.0
-		for i in intervals.size():
-			if i%2 == 0:
-				intervals[i].view_.polygon_.color = Color.GRAY
-			else:
-				intervals[i].view_.polygon_.color = Color.BLACK
-				
-		activateInterval(pattern1[current_goal])
-			
+	
 	cursor.view_.reposition()

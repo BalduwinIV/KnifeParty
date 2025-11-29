@@ -10,6 +10,18 @@ var color_: Color
 var halfWidth_: float
 var pathLength_: float
 var widthPx_: float
+var halfWidthPx_: float
+
+var scoreMultiplier_: float = 1.0
+var neutralScoreColor_: Color = Color.GREEN
+var lowScoreColor_: Color = Color.RED
+var highScoreColor_: Color = Color.GOLD
+var inactiveDarknedValue: float = 0.5
+var neutralScoreColorInactive_: Color = Color.GRAY
+var lowScoreColorInactive_: Color = Color.DARK_GRAY
+var highScoreColorInactive_: Color = Color.LIGHT_GRAY
+const LOW_BOUNDARY = 0.1
+const HIGH_BOUNDARY = 2.0 
 
 
 func _init(center: float, width: float, color: Color, pathLength: float):
@@ -21,6 +33,7 @@ func _init(center: float, width: float, color: Color, pathLength: float):
 	color_ = color
 	pathLength_ = pathLength
 	widthPx_ = pathLength * width
+	halfWidthPx_ = widthPx_ * 0.5
 
 func recalculateInterval(start: float, end: float) -> void:
 	start_ = start
@@ -29,6 +42,7 @@ func recalculateInterval(start: float, end: float) -> void:
 	width_ = end - start
 	halfWidth_ = width_ * 0.5
 	widthPx_ = pathLength_ * width_
+	halfWidthPx_ = widthPx_ * 0.5
 
 func recalculatePoint(center: float, width: float) -> void:
 	center_ = center
@@ -37,3 +51,41 @@ func recalculatePoint(center: float, width: float) -> void:
 	start_ = center - halfWidth_
 	end_ = center + halfWidth_
 	widthPx_ = pathLength_ * width_
+	halfWidthPx_ = widthPx_ * 0.5
+
+func setScoreMultiplier(value: float):
+	scoreMultiplier_ = value
+	
+func addScoreMultiplier(value: float):
+	scoreMultiplier_ += value
+	
+func multScoreMultiplier(value: float):
+	scoreMultiplier_ *= value
+
+func getInterpolatedColor(active: bool) -> Color:
+	#if active: # interval is active
+	if is_equal_approx(scoreMultiplier_, 1.0):
+		if active:
+			return neutralScoreColor_
+		return neutralScoreColor_.darkened(inactiveDarknedValue)
+	elif scoreMultiplier_ > 1.0:
+		var factor = clamp((scoreMultiplier_ - 1.0) / (HIGH_BOUNDARY - 1.0), 0.0, 1.0)
+		var finalColor = neutralScoreColor_.lerp(highScoreColor_, factor)
+		if active:
+			return finalColor
+		return finalColor.darkened(inactiveDarknedValue)
+	else: # scoreMultiplier_ < 1.0
+		var factor = clamp((1.0 - scoreMultiplier_) / (1.0 - LOW_BOUNDARY), 0.0, 1.0)
+		var finalColor = neutralScoreColor_.lerp(lowScoreColor_, factor)
+		if active:
+			return finalColor
+		return finalColor.darkened(inactiveDarknedValue)
+	#else:
+		#if is_equal_approx(scoreMultiplier_, 1.0):
+			#return neutralScoreColorInactive_
+		#elif scoreMultiplier_ > 1.0:
+			#var factor = clamp((scoreMultiplier_ - 1.0) / (HIGH_BOUNDARY - 1.0), 0.0, 1.0)
+			#return neutralScoreColorInactive_.lerp(highScoreColorInactive_, factor)
+		#else: # scoreMultiplier_ < 1.0
+			#var factor = clamp((1.0 - scoreMultiplier_) / (1.0 - LOW_BOUNDARY), 0.0, 1.0)
+			#return neutralScoreColorInactive_.lerp(lowScoreColorInactive_, factor)
