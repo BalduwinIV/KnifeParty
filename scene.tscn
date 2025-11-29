@@ -1,13 +1,15 @@
-[gd_scene load_steps=13 format=3 uid="uid://dfv472i7y6u0o"]
+[gd_scene load_steps=15 format=3 uid="uid://dfv472i7y6u0o"]
 
 [ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
 [ext_resource type="PackedScene" uid="uid://dd2lgqk0vj6l" path="res://KnifeCurve.tscn" id="2_3253y"]
 [ext_resource type="Script" uid="uid://b7plahsqibqlo" path="res://KnifePath.gd" id="3_m7jmp"]
-[ext_resource type="Texture2D" uid="uid://sd5n7hbp7d3x" path="res://resources/images/knife.png" id="4_u3cyc"]
+[ext_resource type="Texture2D" uid="uid://dyrwukr7ghqnq" path="res://resources/images/image (6) (2).png" id="4_5juve"]
 [ext_resource type="AudioStream" uid="uid://cqh2awkjma13e" path="res://resources/sound/tree_cut.mp3" id="5_y2354"]
 [ext_resource type="AudioStream" uid="uid://c2rvp8i0ytwsp" path="res://resources/sound/pain.mp3" id="6_ni31j"]
-[ext_resource type="Texture2D" uid="uid://c2w6wtcdl702" path="res://resources/images/hand.png" id="6_y2354"]
+[ext_resource type="Texture2D" uid="uid://idlirhosw8g5" path="res://resources/images/hand(2).png" id="7_fy5k1"]
 [ext_resource type="PackedScene" uid="uid://bucgormj5env" path="res://gameOver.tscn" id="8_xlvrw"]
+[ext_resource type="AudioStream" uid="uid://d25sjfpfj2nx3" path="res://resources/sound/Culture_Beat_-_Mr._Vain_Instrumental_Version_(mp3.pm).mp3" id="9_5c1cw"]
+[ext_resource type="Texture2D" uid="uid://ugcd270t76um" path="res://resources/images/background.jpeg" id="10_akxrc"]
 
 [sub_resource type="Curve2D" id="Curve2D_3253y"]
 bake_interval = 0.01
@@ -25,13 +27,14 @@ outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="Curve2D" id="Curve2D_y2354"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 79, 189, -99, -104, 99, 104, 312, 236, 0, 0, 0, 0, 386, 453)
+"points": PackedVector2Array(26.015001, -30.007996, -26.015001, 30.007996, 64, 124, -134.07692, 5.128189, 134.07692, -5.128189, 193, 79, -21.728764, -149.05238, 21.728764, 149.05238, 495, 239, 0, 0, 0, 0, 488, 402)
 }
-point_count = 3
+point_count = 4
 
 [node name="Scene" type="Node2D"]
 
 [node name="Path2D" type="Path2D" parent="." node_paths=PackedStringArray("scoreLabel")]
+z_index = 5
 position = Vector2(60, 50)
 curve = SubResource("Curve2D_3253y")
 script = ExtResource("1_ulcgi")
@@ -43,6 +46,7 @@ f4Width = 0.064
 f5Width = 0.04
 
 [node name="ScoreLabel" type="Label" parent="."]
+z_index = 5
 offset_left = 538.0
 offset_top = 657.0
 offset_right = 1264.0
@@ -55,22 +59,24 @@ vertical_alignment = 1
 
 [node name="KnifeCurve" parent="." instance=ExtResource("2_3253y")]
 visible = true
+z_index = 3
 
 [node name="Path2D3" type="Path2D" parent="KnifeCurve"]
 material = SubResource("CanvasItemMaterial_m7jmp")
-position = Vector2(47, 35)
+position = Vector2(34, 1)
 curve = SubResource("Curve2D_y2354")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="KnifeCurve/Path2D3"]
-position = Vector2(79, 189)
+position = Vector2(64, 124)
 rotation = -0.40218666
 rotates = false
 script = ExtResource("3_m7jmp")
 
 [node name="Sprite2D" type="Sprite2D" parent="KnifeCurve/Path2D3/PathFollow2D"]
-rotation = -0.73481816
-scale = Vector2(0.92692137, 0.9130993)
-texture = ExtResource("4_u3cyc")
+position = Vector2(12.518898, 210.71365)
+rotation = -0.49431884
+scale = Vector2(0.5810383, 0.572374)
+texture = ExtResource("4_5juve")
 
 [node name="AudioKnifeInterval" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("5_y2354")
@@ -78,12 +84,23 @@ stream = ExtResource("5_y2354")
 [node name="AudioKnifeFinger" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("6_ni31j")
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="Hand" type="Node2D" parent="."]
 
-[node name="Sprite2D" type="Sprite2D" parent="Node2D"]
-position = Vector2(179.00003, 586)
-rotation = 0.32612
-texture = ExtResource("6_y2354")
+[node name="Sprite2D" type="Sprite2D" parent="Hand"]
+z_index = 1
+position = Vector2(288, 565)
+rotation = 0.5270843
+texture = ExtResource("7_fy5k1")
 
 [node name="GameOver" parent="." instance=ExtResource("8_xlvrw")]
 visible = false
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_5c1cw")
+volume_db = -9.593
+autoplay = true
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(642.00006, 364)
+scale = Vector2(0.47946906, 0.47946906)
+texture = ExtResource("10_akxrc")
