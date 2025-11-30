@@ -45,7 +45,15 @@ var fliesList: Array[FliesPair] = []
 var fly_followers: Array[PathFollow2D] = []
 var knifeCurve: KnifePath
 var current_goal: int
+var current_pattern: int = 0
 var pattern1: Array[int] = [0, 2, 4, 2, 4, 6, 4, 6, 8, 6, 8, 10, 8, 6, 8, 6, 4, 6, 4, 2, 4, 2]
+var pattern2: Array[int] = [0, 2, 0, 4, 0, 6, 0, 8, 0, 10, 0, 8, 0, 6, 0, 4]
+var pattern3: Array[int] = [0, 2, 4, 10, 8, 6, 4, 2, 0, 6, 8, 10]
+var pattern4: Array[int] = [0, 6, 2, 8, 4, 10, 2, 8]
+var pattern5: Array[int] = [0, 10, 2, 8, 4, 6, 2, 8]
+var patterns: Array[Array] = [
+	pattern1, pattern2, pattern3, pattern4, pattern5
+]
 var repetition: int = 2
 var playingPhase: bool = true
 var modificatorManager: ModificatorManager
@@ -172,7 +180,7 @@ func redrawFinger(idx: int) -> void:
 func redrawInterval(idx: int) -> void:
 	var leftColor: Color
 	var rightColor: Color
-	var isActive = idx == pattern1[current_goal]
+	var isActive = idx == patterns[current_pattern][current_goal]
 	if idx > 0:
 		leftColor = intervals[idx - 1].data_.getInterpolatedColor(isActive)
 	else:
@@ -212,7 +220,7 @@ func onFlyAction() -> void:
 	cursor.data_.minSpeed_ = min(cursor.data_.minSpeed_ + 0.2, cursor.data_.maxSpeed_)
 	
 func calculateAdaptiveSpeed() -> float:
-	var currentInterval = intervals[pattern1[current_goal]]
+	var currentInterval = intervals[patterns[current_pattern][current_goal]]
 	var closestPoint = clamp(cursor.data_.pos_, currentInterval.data_.start_, currentInterval.data_.end_)
 	var distance = abs(cursor.data_.pos_ - closestPoint)
 	var factor = clamp(distance / cursor.data_.speedDetectionRange, 0.0, 1.0)
@@ -260,9 +268,9 @@ func inPlayingPhase(delta: float):
 				onFlyAction()
 				intervals[idx].view_.startAnimationFly()
 			else:
-				intervals[pattern1[current_goal]].view_.hideFly() # hide fly in interval
-				findAndHideFlyOnCurve(pattern1[current_goal])
-		if idx == pattern1[current_goal]:
+				intervals[patterns[current_pattern][current_goal]].view_.hideFly() # hide fly in interval
+				findAndHideFlyOnCurve(patterns[current_pattern][current_goal])
+		if idx == patterns[current_pattern][current_goal]:
 			var offset = getOffsetInsideInterval()
 			var scoreInc: float
 			if (offset < 0.5):
@@ -290,18 +298,18 @@ func inPlayingPhase(delta: float):
 			addScorePoints(scoreInc)
 			
 			current_goal += 1
-			if current_goal == pattern1.size():
+			if current_goal == patterns[current_pattern].size():
 				repetition -=1
 				current_goal = 0
 				
 			if spawnFly(): # spawn fly
-				var interval = intervals[pattern1[current_goal]]
+				var interval = intervals[patterns[current_pattern][current_goal]]
 				var pos = randf_range(0.3, 0.7)
 				var width = randf_range(0.005, 0.02)
 				var f_pos = interval.data_.center_ + (interval.data_.flyPos_-0.5)*interval.data_.width_
 				var f = FliesPair.new(f_pos, true)
 				fliesList.append(f)
-				var find = findFlyOnCurve(pattern1[current_goal])
+				var find = findFlyOnCurve(patterns[current_pattern][current_goal])
 				#if find == null:
 				newFlyOnCurve(f)
 				#else:
@@ -309,7 +317,7 @@ func inPlayingPhase(delta: float):
 				interval.data_.setUpFly(pos, width, Color.BLUE)
 				interval.view_.drawFly()
 			
-			if pattern1[current_goal] < idx:
+			if patterns[current_pattern][current_goal] < idx:
 				cursorDir = -1
 			else:
 				cursorDir = 1
@@ -350,7 +358,7 @@ func newFlyOnCurve(fly_data: FliesPair):
 	follower.progress_ratio = fly_data.pos_
 	# Создаем спрайт
 	var sprite := Sprite2D.new()
-	sprite.texture = preload("res://resources/images/image (10) (1).png")
+	sprite.texture = preload("res://resources/images/fly.png")
 	# Задаем фиксированный размер
 	var target_size = Vector2(40, 40)  
 	var tex_size = sprite.texture.get_size()
@@ -384,6 +392,7 @@ func _process(delta: float) -> void:
 		modificatorManager.mustHide = false
 		modificatorManager.view_.hideButtons()
 		repetition = 3
+		current_pattern = randi_range(0, patterns.size() - 1)
 
 	if repetition == 0:
 		playingPhase = false
