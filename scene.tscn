@@ -3,12 +3,12 @@
 [ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
 [ext_resource type="FontFile" uid="uid://bv2ojckt38w4p" path="res://resources/fonts/Averia_Serif_Libre,EB_Garamond/EB_Garamond/static/EBGaramond-Regular.ttf" id="2_73fnb"]
 [ext_resource type="PackedScene" uid="uid://dd2lgqk0vj6l" path="res://KnifeCurve.tscn" id="2_3253y"]
+[ext_resource type="FontFile" uid="uid://ctdalc2w5lau" path="res://resources/fonts/Averia_Serif_Libre,EB_Garamond/EB_Garamond/static/EBGaramond-SemiBold.ttf" id="2_gu47o"]
 [ext_resource type="Script" uid="uid://b7plahsqibqlo" path="res://KnifePath.gd" id="3_m7jmp"]
 [ext_resource type="Texture2D" uid="uid://dyrwukr7ghqnq" path="res://resources/images/knife.png" id="4_5juve"]
 [ext_resource type="AudioStream" uid="uid://cqh2awkjma13e" path="res://resources/sound/tree_cut.mp3" id="5_y2354"]
 [ext_resource type="AudioStream" uid="uid://c2rvp8i0ytwsp" path="res://resources/sound/pain.mp3" id="6_ni31j"]
 [ext_resource type="Texture2D" uid="uid://idlirhosw8g5" path="res://resources/images/hand.png" id="7_fy5k1"]
-[ext_resource type="PackedScene" uid="uid://bucgormj5env" path="res://gameOver.tscn" id="8_xlvrw"]
 [ext_resource type="AudioStream" uid="uid://d25sjfpfj2nx3" path="res://resources/sound/Culture_Beat_-_Mr._Vain_Instrumental_Version_(mp3.pm).mp3" id="9_5c1cw"]
 [ext_resource type="Script" uid="uid://ccwmlgj2aclke" path="res://Score/ScoreManager.gd" id="10_5juve"]
 [ext_resource type="Texture2D" uid="uid://ugcd270t76um" path="res://resources/images/background.jpeg" id="10_akxrc"]
@@ -59,7 +59,7 @@ position = Vector2(60, 50)
 curve = SubResource("Curve2D_3253y")
 script = ExtResource("1_ulcgi")
 scoreLabel = NodePath("../ScoreLabel")
-font_ = ExtResource("2_73fnb")
+font_ = ExtResource("2_gu47o")
 fingerColor = Color(1, 0.65534985, 0.601841, 1)
 f1Pos = 0.16
 f1Width = 0.046
@@ -120,8 +120,18 @@ position = Vector2(288, 565)
 rotation = 0.5270843
 texture = ExtResource("7_fy5k1")
 
-[node name="GameOver" parent="." instance=ExtResource("8_xlvrw")]
+[node name="GameOver" parent="."]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
 visible = false
+script = null
 
 [node name="ScoreManagerNode" type="Node" parent="." node_paths=PackedStringArray("mainLabel")]
 script = ExtResource("10_5juve")

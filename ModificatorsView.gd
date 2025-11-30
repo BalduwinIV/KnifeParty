@@ -155,8 +155,8 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	var label = Label.new()
 	label.text = title
 	label.label_settings = LabelSettings.new()
-	label.label_settings.font_size = 18
-	label.label_settings.outline_size = 3
+	label.label_settings.font_size = 24
+	label.label_settings.outline_size = 4
 	label.label_settings.font_color = Color.RED
 	label.label_settings.font = font
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -173,9 +173,10 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	var desc_label = Label.new()
 	desc_label.text = description
 	desc_label.label_settings = LabelSettings.new()
-	desc_label.label_settings.font_size = 14
+	desc_label.label_settings.font_size = 18
 	desc_label.label_settings.font_color = Color.MIDNIGHT_BLUE
-	desc_label.label_settings.outline_size = 2
+	desc_label.label_settings.outline_size = 3
+	desc_label.custom_minimum_size = Vector2(100, 60)
 	desc_label.label_settings.font = font
 	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	desc_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -190,7 +191,7 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	var f_label = Label.new()
 	f_label.text = finger
 	f_label.label_settings = LabelSettings.new()
-	f_label.label_settings.font_size = 20
+	f_label.label_settings.font_size = 26
 	f_label.label_settings.outline_size = 4
 	f_label.label_settings.font_color = Color.BLACK
 	f_label.label_settings.font = font
