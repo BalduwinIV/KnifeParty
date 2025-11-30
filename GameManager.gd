@@ -319,10 +319,9 @@ func inPlayingPhase(delta: float):
 				var f = FliesPair.new(f_pos, true)
 				fliesList.append(f)
 				var find = findFlyOnCurve(patterns[current_pattern][current_goal])
-				#if find == null:
+
 				newFlyOnCurve(f)
-				#else:
-					#find.visible_ = true
+
 				interval.data_.setUpFly(pos, width, Color.BLUE)
 				interval.view_.drawFly()
 			
@@ -367,7 +366,7 @@ func newFlyOnCurve(fly_data: FliesPair):
 	follower.progress_ratio = fly_data.pos_
 	# Создаем спрайт
 	var sprite := Sprite2D.new()
-	sprite.texture = preload("res://resources/images/fly.png")
+	sprite.texture = preload("res://resources/images/image (10) (1).png")
 	# Задаем фиксированный размер
 	var target_size = Vector2(40, 40)  
 	var tex_size = sprite.texture.get_size()
@@ -400,9 +399,11 @@ func _process(delta: float) -> void:
 		get_tree().quit( )
 	if repetition > 0:
 		inPlayingPhase(delta)
+
 	if modificatorManager.mustHide:
 		modificatorManager.mustHide = false
 		modificatorManager.view_.hideButtons()
+		modificatorManager.view_.redraw()
 		repetition = 3
 		current_pattern = randi_range(0, patterns.size() - 1)
 
