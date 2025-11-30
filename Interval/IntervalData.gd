@@ -22,12 +22,12 @@ var lives_: int = 2
 
 var scoreMultiplier_: float = 1.0
 var neutralScoreColor_: Color = Color.GREEN
-var lowScoreColor_: Color = Color.RED
-var highScoreColor_: Color = Color.GOLD
+var lowScoreColor_: Color = Color("#c22715")
+var highScoreColor_: Color = Color("16c26a")
 var inactiveDarknedValue: float = 0.5
-var neutralScoreColorInactive_: Color = Color.GRAY
-var lowScoreColorInactive_: Color = Color.DARK_GRAY
-var highScoreColorInactive_: Color = Color.LIGHT_GRAY
+#var neutralScoreColorInactive_: Color = Color.GRAY
+#var lowScoreColorInactive_: Color = Color.DARK_GRAY
+#var highScoreColorInactive_: Color = Color.LIGHT_GRAY
 const LOW_BOUNDARY = 0.1
 const HIGH_BOUNDARY = 2.0 
 
