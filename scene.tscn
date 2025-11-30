@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dfv472i7y6u0o"]
+[gd_scene load_steps=22 format=3 uid="uid://dfv472i7y6u0o"]
 
 [ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
 [ext_resource type="FontFile" uid="uid://bv2ojckt38w4p" path="res://resources/fonts/Averia_Serif_Libre,EB_Garamond/EB_Garamond/static/EBGaramond-Regular.ttf" id="2_73fnb"]
@@ -66,7 +66,7 @@ f1Width = 0.046
 f2Pos = 0.3125
 f3Pos = 0.43
 f3Width = 0.058
-f4Pos = 0.61
+f4Pos = 0.5725
 f4Width = 0.047
 f5Pos = 0.855
 f5Width = 0.063
@@ -119,19 +119,6 @@ material = SubResource("ShaderMaterial_8hm71")
 position = Vector2(288, 565)
 rotation = 0.5270843
 texture = ExtResource("7_fy5k1")
-
-[node name="GameOver" parent="."]
-_import_path = NodePath("")
-unique_name_in_owner = false
-process_mode = 0
-process_priority = 0
-process_physics_priority = 0
-process_thread_group = 0
-physics_interpolation_mode = 0
-auto_translate_mode = 0
-editor_description = ""
-visible = false
-script = null
 
 [node name="ScoreManagerNode" type="Node" parent="." node_paths=PackedStringArray("mainLabel")]
 script = ExtResource("10_5juve")

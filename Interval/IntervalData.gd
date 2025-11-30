@@ -19,8 +19,8 @@ var flyHeight_: float = 7.5
 var flyWidthPx_: float = 1.0
 var flyHalfWidthPx_: float = 1.0
 var flyColor_: Color = Color.BLUE
-var lives_: int = 2
-var maxedLives_: int = 2
+var lives_: int = 4
+var maxedLives_: int = 4
 var fullLivesColor_: Color = Color("ffa799")
 var lowestLivesColor_: Color = Color.RED
 
