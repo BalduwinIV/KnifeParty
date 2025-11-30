@@ -60,7 +60,7 @@ var pattern5: Array[int] = [0, 10, 2, 8, 4, 6, 2, 8]
 var patterns: Array[Array] = [
 	pattern1, pattern2, pattern3, pattern4, pattern5
 ]
-var repetition: int = 0
+var repetition: int = 2
 var playingPhase: bool = true
 var modificatorManager: ModificatorManager
 
