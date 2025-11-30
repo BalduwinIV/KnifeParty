@@ -266,12 +266,13 @@ func inPlayingPhase(delta: float):
 			intervals[idx].data_.lives_ -= 1
 			intervals[idx].view_.startFingerAnimation()
 			if intervals[idx].data_.lives_ <= 0:
-				gameOver = true
-				$"../GameOver".show()
-				return
-			intervals[idx].data_.updateFingerColor()
-			intervals[idx].data_.multScoreMultiplier(0.5)
-			redrawFinger(idx)
+			# 	gameOver = true
+			# 	$"../GameOver".show()
+			# 	return
+			# intervals[idx].data_.updateFingerColor()
+			# intervals[idx].data_.multScoreMultiplier(0.5)
+			# redrawFinger(idx)
+				get_tree().change_scene_to_file("res://end_scene.tscn")   
 			$"../AudioKnifeFinger".play()
 		if intervals[idx].data_.flyShow_:
 			if intervals[idx].data_.checkFlyHit(hitPos):
