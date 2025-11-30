@@ -46,14 +46,14 @@ func randomForAll():
 
 
 func _ready():
-	# Anchors: правый нижний угол
+
 	hbox.anchor_left = 1.0
 	hbox.anchor_top = 1.0
 	hbox.anchor_right = 1.0
 	hbox.anchor_bottom = 1.0
 	hbox.add_theme_constant_override("separation", 20) 
-	# Позиция относительно нижнего правого угла
-	hbox.position = Vector2(720, 300)  # сдвиг влево и вверх
+	
+	hbox.position = Vector2(720, 300) 
 	hbox.size_flags_horizontal = Control.SIZE_FILL
 	hbox.size_flags_vertical = Control.SIZE_FILL
 	
@@ -65,14 +65,10 @@ func _ready():
 	var icon_f = preload("res://resources/images/finger.png")
 	var icon_i = preload("res://resources/images/fingers2.png")
 	
-
-
 	var title1 = "Slim Finger"
 	var descr1 = "Reduces the width of a finger."
-
 	var title2 = "Point Multiplier"
 	var descr2 = "Gain extra points between fingers."
-
 	var title3 = "Finger Shield"
 	var descr3 = "Survive one extra hit from the knife."
 	randomForAll()
@@ -94,7 +90,7 @@ func _ready():
 	hideButtons()
 
 func create_card(parent: Node, title: String, description: String, finger: String, texture: Texture2D, icon_texture: Texture2D, callback: String):
-	# Создаем кнопку (карточку)
+
 	var card = Button.new()
 	card.z_index = 10
 	card.custom_minimum_size = Vector2(160, 220)
@@ -102,11 +98,10 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	card.size_flags_vertical = Control.SIZE_FILL
 	card.toggle_mode = false
 	card.flat = true
-	card.clip_contents = true  # ВАЖНО: обрезает всё за границами кнопки
+	card.clip_contents = true 
 	
 	parent.add_child(card)
 	
-	# Фоновая картинка растягивается на всю кнопку
 	var img = TextureRect.new()
 	img.texture = texture
 	img.stretch_mode = TextureRect.STRETCH_SCALE
@@ -122,7 +117,6 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	
 	card.add_child(img)
 	
-	# MarginContainer для отступов внутри кнопки
 	var margin = MarginContainer.new()
 	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	margin.anchor_left = 0.0
@@ -134,7 +128,6 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	margin.offset_right = 0
 	margin.offset_bottom = 0
 	
-	# Устанавливаем отступы
 	margin.add_theme_constant_override("margin_left", 10)
 	margin.add_theme_constant_override("margin_top", 10)
 	margin.add_theme_constant_override("margin_right", 10)
@@ -142,20 +135,18 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	
 	card.add_child(margin)
 	
-	# Контейнер для вертикального размещения
 	var vbox = VBoxContainer.new()
 	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.size_flags_horizontal = Control.SIZE_FILL
 	vbox.size_flags_vertical = Control.SIZE_FILL
-	vbox.add_theme_constant_override("separation", 2)  # расстояние между элементами
+	vbox.add_theme_constant_override("separation", 2) 
 	
 	margin.add_child(vbox)
 	
-	# 1. Заголовок вверху
 	var label = Label.new()
 	label.text = title
 	label.label_settings = LabelSettings.new()
-	label.label_settings.font_size = 18
+	label.label_settings.font_size = 20
 	label.label_settings.outline_size = 3
 	label.label_settings.font_color = Color.RED
 	label.label_settings.font = font
@@ -169,11 +160,10 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	
 	vbox.add_child(label)
 	
-	# 2. НОВЫЙ ТЕКСТ - Описание посередине
 	var desc_label = Label.new()
 	desc_label.text = description
 	desc_label.label_settings = LabelSettings.new()
-	desc_label.label_settings.font_size = 14
+	desc_label.label_settings.font_size = 20
 	desc_label.label_settings.font_color = Color.MIDNIGHT_BLUE
 	desc_label.label_settings.outline_size = 2
 	desc_label.label_settings.font = font
@@ -182,7 +172,7 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	desc_label.size_flags_horizontal = Control.SIZE_FILL
-	desc_label.size_flags_vertical = Control.SIZE_EXPAND_FILL  # растягивается на свободное место
+	desc_label.size_flags_vertical = Control.SIZE_EXPAND_FILL  
 	desc_label.clip_text = true
 	
 	vbox.add_child(desc_label)
@@ -190,7 +180,7 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	var f_label = Label.new()
 	f_label.text = finger
 	f_label.label_settings = LabelSettings.new()
-	f_label.label_settings.font_size = 20
+	f_label.label_settings.font_size = 22
 	f_label.label_settings.outline_size = 4
 	f_label.label_settings.font_color = Color.BLACK
 	f_label.label_settings.font = font
@@ -199,12 +189,11 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	f_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	f_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	f_label.size_flags_horizontal = Control.SIZE_FILL
-	f_label.size_flags_vertical = Control.SIZE_EXPAND_FILL  # растягивается на свободное место
+	f_label.size_flags_vertical = Control.SIZE_EXPAND_FILL  
 	f_label.clip_text = true
 	
 	vbox.add_child(f_label)
 	
-	# 3. Контейнер для иконки с отступами
 	var icon_container = MarginContainer.new()
 	icon_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	icon_container.size_flags_horizontal = Control.SIZE_FILL
@@ -215,7 +204,6 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	
 	vbox.add_child(icon_container)
 	
-	# 4. Иконка внизу
 	var icon = TextureRect.new()
 	icon.texture = icon_texture
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -227,16 +215,13 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	
 	icon_container.add_child(icon)
 	
-	# Подключаем клик
 	card.pressed.connect(self.get(callback))
 
 
 func redraw():
-	# Сначала очищаем текущие кнопки
 	for child in hbox.get_children():
 		child.queue_free()
 	
-	# Получаем случайное расположение
 	var arr = [1, 2, 3]
 	var layout_choice = arr[randi() % arr.size()]
 	var tex = preload("res://resources/images/paper.png")
@@ -267,11 +252,11 @@ func redraw():
 		create_card(hbox, title1, descr1, i1_s, tex, icon_f, "_on_button1_pressed")
 		create_card(hbox, title2, descr2, i2_s, tex, icon_i, "_on_button2_pressed")
 
-	# Можно сразу скрыть, если нужно
+	
 	hideButtons()
 
 
-# Обработчики кнопок
+
 func _on_button1_pressed():
 	newModType = "decrease_width"
 	

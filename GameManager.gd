@@ -140,7 +140,6 @@ func prepareIntervals() -> void:
 	intervals.append(i6)
 	
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	print(get_path())
 	print(get_parent())
@@ -366,10 +365,10 @@ func newFlyOnCurve(fly_data: FliesPair):
 	follower.z_index = 2
 	follower.v_offset = 380
 	follower.progress_ratio = fly_data.pos_
-	# Создаем спрайт
+
 	var sprite := Sprite2D.new()
 	sprite.texture = preload("res://resources/images/fly.png")
-	# Задаем фиксированный размер
+
 	var target_size = Vector2(40, 40)  
 	var tex_size = sprite.texture.get_size()
 	sprite.scale = target_size / tex_size
@@ -386,7 +385,6 @@ func findFlyOnCurve(i: int) -> FliesPair:
 	return null
 	
 	
-
 func findAndHideFlyOnCurve(i: int):
 	var p = intervals[i].data_.center_ + (intervals[i].data_.flyPos_-0.5)*intervals[i].data_.width_
 	for f in fliesList:
@@ -394,7 +392,6 @@ func findAndHideFlyOnCurve(i: int):
 			f.visible_ = false
 	
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if gameOver:
 		gameOver = false

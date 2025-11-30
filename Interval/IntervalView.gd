@@ -189,20 +189,18 @@ func startFingerAnimation() -> void:
 	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY - animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY - animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
-	# Then, spring back to the original position
 	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	# --- Final Cleanup ---
+	
 	polygonLeftAnimationTween.connect("finished", Callable(self, "_on_complex_animation_finished"))
 	polygonRightAnimationTween.connect("finished", Callable(self, "_on_complex_animation_finished"))
 
-# Helper function to chain color pulses onto a tween
+
 func pulse_color_tween(tween: Tween, polygon: Polygon2D, color_to_tint: Color, duration_per_half: float, num_pulses: int):
-	# Calculate the tinted color
-	var tinted_color = int_data_.color_.lerp(color_to_tint, animationFingerPulseStrength)
 	
+	var tinted_color = int_data_.color_.lerp(color_to_tint, animationFingerPulseStrength)
 	for i in range(num_pulses):
-		# Tint In
+	
 		tween.tween_property(polygon, "modulate", tinted_color, duration_per_half).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		# Tint Out (back to original color)
 		tween.tween_property(polygon, "modulate", int_data_.color_, duration_per_half).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)

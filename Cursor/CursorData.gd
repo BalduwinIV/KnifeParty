@@ -7,9 +7,9 @@ var height_: float
 var widthPx_: float
 var halfWidthPx_: float
 var pathLength_: float
-var speed_: float = 0.3 
+var speed_: float = 0.6 
 var minSpeed_: float = 0.3
-var maxSpeed_: float = 0.3
+var maxSpeed_: float = 2.0
 var speedDetectionRange: float = 0.2
 var color_: Color
 
