@@ -5,7 +5,7 @@ var start_: float
 var end_: float
 var center_: float
 var width_: float # from 0.0 to 1.0
-var height_: float = 10
+var height_: float
 var color_: Color
 var halfWidth_: float
 var pathLength_: float
@@ -15,10 +15,14 @@ var halfWidthPx_: float
 var flyShow_: bool = false
 var flyPos_: float = 0.0
 var flyWidth_: float = 1.0
+var flyHeight_: float = 7.5
 var flyWidthPx_: float = 1.0
 var flyHalfWidthPx_: float = 1.0
 var flyColor_: Color = Color.BLUE
 var lives_: int = 2
+var maxedLives_: int = 2
+var fullLivesColor_: Color = Color("ffa799")
+var lowestLivesColor_: Color = Color.RED
 
 var scoreMultiplier_: float = 1.0
 var neutralScoreColor_: Color = Color.GREEN
@@ -29,12 +33,13 @@ var inactiveDarknedValue: float = 0.5
 #var lowScoreColorInactive_: Color = Color.DARK_GRAY
 #var highScoreColorInactive_: Color = Color.LIGHT_GRAY
 const LOW_BOUNDARY = 0.1
-const HIGH_BOUNDARY = 2.0 
+const HIGH_BOUNDARY = 10.0 
 
 
-func _init(center: float, width: float, color: Color, pathLength: float):
+func _init(center: float, width: float, color: Color, pathLength: float, height: float):
 	center_ = center
 	width_ = width
+	height_ = height
 	halfWidth_ = width * 0.5
 	start_ = center - halfWidth_
 	end_ = center + halfWidth_
@@ -103,3 +108,7 @@ func getInterpolatedColor(active: bool) -> Color:
 		if active:
 			return finalColor
 		return finalColor.darkened(inactiveDarknedValue)
+
+func updateFingerColor() -> void:
+	var factor = clamp(lives_ / float(maxedLives_), 0.0, 1.0)
+	color_ = lowestLivesColor_.lerp(fullLivesColor_, factor)

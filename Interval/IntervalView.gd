@@ -5,6 +5,8 @@ var int_data_: IntervalDataClass
 var polygon_: Polygon2D
 var polygonPoints_: PackedVector2Array
 
+var DIESEL_MAT = preload("res://resources/materials/diesel.tres")
+
 var polygonLeft_: Polygon2D
 var polygonLeftPoints_: PackedVector2Array
 var polygonRight_: Polygon2D
@@ -30,6 +32,8 @@ var animationFingerPulseDuration: float = 0.1
 var animationFingerBounceDuration: float = 0.05
 
 
+ 
+
 func initPolygonPoints():
 	polygonLeftPoints_ = PackedVector2Array()
 	polygonLeftPoints_.append(Vector2(-int_data_.halfWidthPx_, -int_data_.height_))
@@ -50,10 +54,10 @@ func initPolygonPoints():
 	polygonFlyPoints_.append(Vector2(0, 0))
 	
 func drawFly():
-	polygonFlyPoints_[0] = Vector2(-int_data_.flyHalfWidthPx_, -int_data_.height_)
-	polygonFlyPoints_[1] = Vector2(int_data_.flyHalfWidthPx_, -int_data_.height_)
-	polygonFlyPoints_[2] = Vector2(int_data_.flyHalfWidthPx_, int_data_.height_)
-	polygonFlyPoints_[3] = Vector2(-int_data_.flyHalfWidthPx_, int_data_.height_)
+	polygonFlyPoints_[0] = Vector2(-int_data_.flyHalfWidthPx_, -int_data_.flyHeight_)
+	polygonFlyPoints_[1] = Vector2(int_data_.flyHalfWidthPx_, -int_data_.flyHeight_)
+	polygonFlyPoints_[2] = Vector2(int_data_.flyHalfWidthPx_, int_data_.flyHeight_)
+	polygonFlyPoints_[3] = Vector2(-int_data_.flyHalfWidthPx_, int_data_.flyHeight_)
 	polygonFly_.polygon = polygonFlyPoints_
 	polygonFly_.color = int_data_.flyColor_
 	polygonFly_.visible = true
@@ -82,17 +86,20 @@ func redrawRightPolygon(color: Color):
 func createFlyPolygon():
 	polygonFly_ = Polygon2D.new()
 	polygonFly_.visible = false
+	polygonFly_.material = DIESEL_MAT.duplicate()
 	add_child(polygonFly_)
 
 func createLeftPolygon():
 	polygonLeft_ = Polygon2D.new()
 	polygonLeft_.visible = true
+	polygonLeft_.material = DIESEL_MAT.duplicate()
 	redrawLeftPolygon(int_data_.color_)
 	add_child(polygonLeft_)
 	
 func createRightPolygon():
 	polygonRight_ = Polygon2D.new()
 	polygonRight_.visible = true
+	polygonRight_.material = DIESEL_MAT.duplicate()
 	redrawRightPolygon(int_data_.color_)
 	add_child(polygonRight_)
 
@@ -148,6 +155,15 @@ func startFingerAnimation() -> void:
 	if polygonLeftAnimationTween and polygonLeftAnimationTween.is_valid():
 		polygonLeftAnimationTween.kill()
 		
+	var matR = polygonRight_.material as ShaderMaterial
+	var matL = polygonLeft_.material as ShaderMaterial
+	var jitterSpeed = randf_range(0.0, 10.0)
+	var jitterAmount = randf_range(1.0, 5.0)
+	matR.set_shader_parameter("jitter_speed", 10 * (int_data_.maxedLives_ - int_data_.lives_ + 1) + jitterSpeed)
+	matR.set_shader_parameter("jitter_amount", jitterAmount)
+	matL.set_shader_parameter("jitter_speed", 10 * (int_data_.maxedLives_ - int_data_.lives_ + 1) + jitterSpeed)
+	matL.set_shader_parameter("jitter_amount", jitterAmount)
+	
 	polygonLeftAnimationTween = create_tween()
 	polygonRightAnimationTween = create_tween()
 	
@@ -161,21 +177,21 @@ func startFingerAnimation() -> void:
 	pulse_color_tween(colorLeftTween, polygonLeft_, animationFingerPulseColor, animationFingerPulseDuration, 2)
 	pulse_color_tween(colorRightTween, polygonRight_, animationFingerPulseColor, animationFingerPulseDuration, 2)
 	
-	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", yBottom, animationFingerMoveDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", yBottom, animationFingerMoveDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", yBottom, animationFingerMoveDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", yBottom, animationFingerMoveDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
-	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", yTop, animationFingerMoveDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", yTop, animationFingerMoveDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", yTop, animationFingerMoveDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", yTop, animationFingerMoveDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
-	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY + animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY + animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY + animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY + animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	
-	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY - animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY - animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY - animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY - animationBounceOverheadY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 	# Then, spring back to the original position
-	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY, animationFingerBounceDuration).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN_OUT)
-	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY, animationFingerBounceDuration).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_IN_OUT)
+	polygonLeftAnimationTween.tween_property(polygonLeft_, "position:y", startY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	polygonRightAnimationTween.tween_property(polygonRight_, "position:y", startY, animationFingerBounceDuration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	# --- Final Cleanup ---
 	polygonLeftAnimationTween.connect("finished", Callable(self, "_on_complex_animation_finished"))
 	polygonRightAnimationTween.connect("finished", Callable(self, "_on_complex_animation_finished"))

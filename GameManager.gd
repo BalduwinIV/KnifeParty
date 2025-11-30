@@ -1,5 +1,7 @@
 extends Path2D
 
+var gameOver: bool = false
+
 var justEnteredInteval = false
 @export var t: float = 0.0
 var hitPos: float = 0.0
@@ -13,6 +15,9 @@ var scoreStandartGain = 0.2
 
 @export_range(0.0, 0.1, 0.0001) var cursorWidth: float = 0.002
 @export_range(0.0, 30.0, 0.1) var cursorHeight: float = 20.0
+
+var fingerHeight: float = 10.0
+var intervalHeight: float = 5.0
 
 # Finger 1
 @export_range(0.0, 1.0, 0.0025) var f1Pos: float = 0.1
@@ -66,17 +71,17 @@ func prepareIntervals() -> void:
 	add_child(cursorView)
 	cursor = CursorPairClass.new(cursorData, cursorView)
 	
-	var i1Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f1Data = IntervalDataClass.new(f1Pos, f1Width, fingerColor, pathLength)
-	var i2Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f2Data = IntervalDataClass.new(f2Pos, f2Width, fingerColor, pathLength)
-	var i3Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f3Data = IntervalDataClass.new(f3Pos, f3Width, fingerColor, pathLength)
-	var i4Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f4Data = IntervalDataClass.new(f4Pos, f4Width, fingerColor, pathLength)
-	var i5Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
-	var f5Data = IntervalDataClass.new(f5Pos, f5Width, fingerColor, pathLength)
-	var i6Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength)
+	var i1Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength, intervalHeight)
+	var f1Data = IntervalDataClass.new(f1Pos, f1Width, fingerColor, pathLength, fingerHeight)
+	var i2Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength, intervalHeight)
+	var f2Data = IntervalDataClass.new(f2Pos, f2Width, fingerColor, pathLength, fingerHeight)
+	var i3Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength, intervalHeight)
+	var f3Data = IntervalDataClass.new(f3Pos, f3Width, fingerColor, pathLength, fingerHeight)
+	var i4Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength, intervalHeight)
+	var f4Data = IntervalDataClass.new(f4Pos, f4Width, fingerColor, pathLength, fingerHeight)
+	var i5Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength, intervalHeight)
+	var f5Data = IntervalDataClass.new(f5Pos, f5Width, fingerColor, pathLength, fingerHeight)
+	var i6Data = IntervalDataClass.new(0, 0, Color.GRAY, pathLength, intervalHeight)
 	
 	i1Data.recalculateInterval(0.0, f1Data.start_)
 	i2Data.recalculateInterval(f1Data.end_, f2Data.start_)
@@ -260,8 +265,12 @@ func inPlayingPhase(delta: float):
 			intervals[idx].data_.lives_ -= 1
 			intervals[idx].view_.startFingerAnimation()
 			if intervals[idx].data_.lives_ <= 0:
-				$"../GameOver".show()  
+				gameOver = true
+				$"../GameOver".show()
 				return
+			intervals[idx].data_.updateFingerColor()
+			intervals[idx].data_.multScoreMultiplier(0.5)
+			redrawFinger(idx)
 			$"../AudioKnifeFinger".play()
 		if intervals[idx].data_.flyShow_:
 			if intervals[idx].data_.checkFlyHit(hitPos):
@@ -386,6 +395,9 @@ func findAndHideFlyOnCurve(i: int):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if gameOver:
+		gameOver = false
+		get_tree().quit( )
 	if repetition > 0:
 		inPlayingPhase(delta)
 	if modificatorManager.mustHide:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dfv472i7y6u0o"]
+[gd_scene load_steps=22 format=3 uid="uid://dfv472i7y6u0o"]
 
 [ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
 [ext_resource type="FontFile" uid="uid://bv2ojckt38w4p" path="res://resources/fonts/Averia_Serif_Libre,EB_Garamond/EB_Garamond/static/EBGaramond-Regular.ttf" id="2_73fnb"]
@@ -12,6 +12,8 @@
 [ext_resource type="AudioStream" uid="uid://d25sjfpfj2nx3" path="res://resources/sound/Culture_Beat_-_Mr._Vain_Instrumental_Version_(mp3.pm).mp3" id="9_5c1cw"]
 [ext_resource type="Script" uid="uid://ccwmlgj2aclke" path="res://Score/ScoreManager.gd" id="10_5juve"]
 [ext_resource type="Texture2D" uid="uid://ugcd270t76um" path="res://resources/images/background.jpeg" id="10_akxrc"]
+[ext_resource type="Shader" uid="uid://bk5gd5000xmrq" path="res://resources/shaders/DieselPunk.gdshader" id="13_akxrc"]
+[ext_resource type="Material" uid="uid://bcdneliyrypxv" path="res://resources/materials/diesel.tres" id="14_gu47o"]
 
 [sub_resource type="Curve2D" id="Curve2D_3253y"]
 bake_interval = 0.01
@@ -33,6 +35,21 @@ _data = {
 "points": PackedVector2Array(26.015001, -30.007996, -26.015001, 30.007996, 64, 124, -134.07692, 5.128189, 134.07692, -5.128189, 193, 79, -21.728764, -149.05238, 21.728764, 149.05238, 495, 239, 0, 0, 0, 0, 488, 402)
 }
 point_count = 4
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_eah60"]
+fractal_type = 3
+fractal_gain = 3.025
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fm5gi"]
+noise = SubResource("FastNoiseLite_eah60")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8hm71"]
+shader = ExtResource("13_akxrc")
+shader_parameter/grain_texture = SubResource("NoiseTexture2D_fm5gi")
+shader_parameter/grain_strength = 0.0
+shader_parameter/jitter_amount = 0.3490000165775
+shader_parameter/jitter_speed = 9.32400044289
+shader_parameter/tint_color = Color(0, 0, 0, 1)
 
 [node name="Scene" type="Node2D"]
 
@@ -92,6 +109,7 @@ stream = ExtResource("6_ni31j")
 
 [node name="Sprite2D" type="Sprite2D" parent="Hand"]
 z_index = 1
+material = SubResource("ShaderMaterial_8hm71")
 position = Vector2(288, 565)
 rotation = 0.5270843
 texture = ExtResource("7_fy5k1")
@@ -113,3 +131,6 @@ autoplay = true
 position = Vector2(642.00006, 364)
 scale = Vector2(0.47946906, 0.47946906)
 texture = ExtResource("10_akxrc")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+material = ExtResource("14_gu47o")
