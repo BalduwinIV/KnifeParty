@@ -63,7 +63,7 @@ vertical_alignment = 1
 
 [node name="KnifeCurve" parent="." instance=ExtResource("2_3253y")]
 visible = true
-z_index = 3
+z_index = 4
 
 [node name="Path2D3" type="Path2D" parent="KnifeCurve"]
 material = SubResource("CanvasItemMaterial_m7jmp")
@@ -81,8 +81,6 @@ position = Vector2(12.518898, 210.71365)
 rotation = -0.49431884
 scale = Vector2(0.5810383, 0.572374)
 texture = ExtResource("4_5juve")
-
-[node name="fly1" type="Sprite2D" parent="KnifeCurve/Path2D3"]
 
 [node name="AudioKnifeInterval" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("5_y2354")

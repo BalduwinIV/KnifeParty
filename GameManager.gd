@@ -41,6 +41,8 @@ var scoreStandartGain = 0.2
 
 var intervals: Array[IntervalPair]
 var cursor: CursorPairClass
+var fliesList: Array[FliesPair] = []
+var fly_followers: Array[PathFollow2D] = []
 var knifeCurve: KnifePath
 var current_goal: int
 var pattern1: Array[int] = [0, 2, 4, 2, 4, 6, 4, 6, 8, 6, 8, 10, 8, 6, 8, 6, 4, 6, 4, 2, 4, 2]
@@ -259,7 +261,7 @@ func inPlayingPhase(delta: float):
 				intervals[idx].view_.startAnimationFly()
 			else:
 				intervals[pattern1[current_goal]].view_.hideFly() # hide fly in interval
-			
+				findAndHideFlyOnCurve(pattern1[current_goal])
 		if idx == pattern1[current_goal]:
 			var offset = getOffsetInsideInterval()
 			var scoreInc: float
@@ -294,7 +296,17 @@ func inPlayingPhase(delta: float):
 				
 			if spawnFly(): # spawn fly
 				var interval = intervals[pattern1[current_goal]]
-				interval.data_.setUpFly(randf_range(0.3, 0.7), randf_range(0.005, 0.02), Color.BLUE)
+				var pos = randf_range(0.3, 0.7)
+				var width = randf_range(0.005, 0.02)
+				var f_pos = interval.data_.center_ + (interval.data_.flyPos_-0.5)*interval.data_.width_
+				var f = FliesPair.new(f_pos, true)
+				fliesList.append(f)
+				var find = findFlyOnCurve(pattern1[current_goal])
+				#if find == null:
+				newFlyOnCurve(f)
+				#else:
+					#find.visible_ = true
+				interval.data_.setUpFly(pos, width, Color.BLUE)
 				interval.view_.drawFly()
 			
 			if pattern1[current_goal] < idx:
@@ -328,6 +340,40 @@ func applyModificators():
 				intervals[idx].data_.width_ *= m.widthCrease_
 				intervals[idx].data_.lives_ += m.lives_
 				intervals[idx].data_.scoreMultiplier_ *= m.scoreMultiplier_
+
+func newFlyOnCurve(fly_data: FliesPair):
+	var follower := PathFollow2D.new()
+	$"../KnifeCurve/Path2D3".add_child(follower)
+	follower.rotates = false
+	follower.z_index = 2
+	follower.v_offset = 380
+	follower.progress_ratio = fly_data.pos_
+	# Создаем спрайт
+	var sprite := Sprite2D.new()
+	sprite.texture = preload("res://resources/images/image (10) (1).png")
+	# Задаем фиксированный размер
+	var target_size = Vector2(40, 40)  
+	var tex_size = sprite.texture.get_size()
+	sprite.scale = target_size / tex_size
+	follower.add_child(sprite)
+
+	follower.visible = fly_data.visible_
+	fly_followers.append(follower)
+	
+func findFlyOnCurve(i: int) -> FliesPair:
+	var p = intervals[i].data_.center_ + (intervals[i].data_.flyPos_-0.5)*intervals[i].data_.width_
+	for f in fliesList:
+		if (p - f.pos_ <=0.01 || f.pos_ - p <=0.01):
+			return f
+	return null
+	
+	
+
+func findAndHideFlyOnCurve(i: int):
+	var p = intervals[i].data_.center_ + (intervals[i].data_.flyPos_-0.5)*intervals[i].data_.width_
+	for f in fliesList:
+		if (p - f.pos_ <=0.01 || f.pos_ - p <=0.01):
+			f.visible_ = false
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -339,7 +385,10 @@ func _process(delta: float) -> void:
 		modificatorManager.view_.hideButtons()
 		repetition = 3
 
-
 	if repetition == 0:
 		playingPhase = false
 		modificatorManager.view_.showButtons()	
+
+	for i in range(fliesList.size()):
+		if fly_followers.size() >= fliesList.size():
+			fly_followers[i].visible = fliesList[i].visible_
