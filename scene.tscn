@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dfv472i7y6u0o"]
+[gd_scene load_steps=21 format=3 uid="uid://dfv472i7y6u0o"]
 
 [ext_resource type="Script" uid="uid://bdpr3oco0ekbg" path="res://GameManager.gd" id="1_ulcgi"]
 [ext_resource type="FontFile" uid="uid://bv2ojckt38w4p" path="res://resources/fonts/Averia_Serif_Libre,EB_Garamond/EB_Garamond/static/EBGaramond-Regular.ttf" id="2_73fnb"]
