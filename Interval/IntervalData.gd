@@ -33,7 +33,7 @@ var inactiveDarknedValue: float = 0.5
 #var lowScoreColorInactive_: Color = Color.DARK_GRAY
 #var highScoreColorInactive_: Color = Color.LIGHT_GRAY
 const LOW_BOUNDARY = 0.1
-const HIGH_BOUNDARY = 10.0 
+const HIGH_BOUNDARY = 2.0 
 
 
 func _init(center: float, width: float, color: Color, pathLength: float, height: float):

@@ -10,6 +10,7 @@ var hitRegistered: bool = false
 var score: float = 0.0
 var scoreStandartGain = 0.2
 @onready var scorePopupManager = $"../ScoreManagerNode"
+@export var font_: Font
 
 @export var fingerColor: Color = Color.BLACK
 
@@ -59,7 +60,7 @@ var pattern5: Array[int] = [0, 10, 2, 8, 4, 6, 2, 8]
 var patterns: Array[Array] = [
 	pattern1, pattern2, pattern3, pattern4, pattern5
 ]
-var repetition: int = 2
+var repetition: int = 2   
 var playingPhase: bool = true
 var modificatorManager: ModificatorManager
 
@@ -146,6 +147,7 @@ func _ready() -> void:
 	prepareIntervals()
 	current_goal = 0
 	modificatorManager = ModificatorManager.new()
+	modificatorManager.view_.font = font_
 	add_child(modificatorManager)
 	drawIntervals()
 	
@@ -256,7 +258,6 @@ func inPlayingPhase(delta: float):
 	
 	if hitRegistered:
 		hitRegistered = false
-		applyModificators()
 		cursor.view_.start_animation()
 		var idx = getInterval(hitPos)
 		if idx%2 == 0:
@@ -366,7 +367,7 @@ func newFlyOnCurve(fly_data: FliesPair):
 	follower.progress_ratio = fly_data.pos_
 	# Создаем спрайт
 	var sprite := Sprite2D.new()
-	sprite.texture = preload("res://resources/images/image (10) (1).png")
+	sprite.texture = preload("res://resources/images/fly.png")
 	# Задаем фиксированный размер
 	var target_size = Vector2(40, 40)  
 	var tex_size = sprite.texture.get_size()
@@ -396,7 +397,7 @@ func findAndHideFlyOnCurve(i: int):
 func _process(delta: float) -> void:
 	if gameOver:
 		gameOver = false
-		get_tree().quit( )
+		get_tree().quit()
 	if repetition > 0:
 		inPlayingPhase(delta)
 
@@ -404,6 +405,7 @@ func _process(delta: float) -> void:
 		modificatorManager.mustHide = false
 		modificatorManager.view_.hideButtons()
 		modificatorManager.view_.redraw()
+		applyModificators()
 		repetition = 3
 		current_pattern = randi_range(0, patterns.size() - 1)
 

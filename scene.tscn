@@ -32,9 +32,9 @@ outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="Curve2D" id="Curve2D_y2354"]
 _data = {
-"points": PackedVector2Array(26.015001, -30.007996, -26.015001, 30.007996, 64, 124, -134.07692, 5.128189, 134.07692, -5.128189, 193, 79, -21.728764, -149.05238, 21.728764, 149.05238, 495, 239, 0, 0, 0, 0, 488, 402)
+"points": PackedVector2Array(-46.45432, 32.12258, 46.45432, -32.12258, 64, 124, -41.910995, -0.4017663, 41.910995, 0.4017663, 211, 71, 0, 0, 0, 0, 302, 100, -26.728764, -61.052383, 26.728764, 61.052383, 370, 184, 0, 0, 0, 0, 391, 316)
 }
-point_count = 4
+point_count = 5
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_eah60"]
 fractal_type = 3
@@ -59,12 +59,17 @@ position = Vector2(60, 50)
 curve = SubResource("Curve2D_3253y")
 script = ExtResource("1_ulcgi")
 scoreLabel = NodePath("../ScoreLabel")
+font_ = ExtResource("2_73fnb")
 fingerColor = Color(1, 0.65534985, 0.601841, 1)
-f1Pos = 0.12
-f2Width = 0.056
+f1Pos = 0.16
+f1Width = 0.046
+f2Pos = 0.3125
+f3Pos = 0.43
 f3Width = 0.058
-f4Width = 0.064
-f5Width = 0.04
+f4Pos = 0.61
+f4Width = 0.047
+f5Pos = 0.855
+f5Width = 0.063
 
 [node name="ScoreLabel" type="Label" parent="."]
 z_index = 5
@@ -88,8 +93,9 @@ position = Vector2(34, 1)
 curve = SubResource("Curve2D_y2354")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="KnifeCurve/Path2D3"]
-position = Vector2(64, 124)
+position = Vector2(73.253334, 117.8456)
 rotation = -0.40218666
+progress = 11.113922
 rotates = false
 script = ExtResource("3_m7jmp")
 

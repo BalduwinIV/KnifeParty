@@ -12,6 +12,8 @@ var i1_s: String = ""
 var i2_s: String = ""
 var i3_s: String = ""
 
+var font: Font
+
 
 func randomlyChooseInterval(type: String) -> int:
 	var choice
@@ -39,6 +41,7 @@ func randomForAll():
 		i2_s = str(choice) +str(" <--> ")+ str(choice +1) 
 	choice = randomlyChooseInterval("save_finger")
 	i3 = choice
+	choice = choice / 2 + 1
 	i3_s = str(choice)
 
 
@@ -93,6 +96,7 @@ func _ready():
 func create_card(parent: Node, title: String, description: String, finger: String, texture: Texture2D, icon_texture: Texture2D, callback: String):
 	# Создаем кнопку (карточку)
 	var card = Button.new()
+	card.z_index = 10
 	card.custom_minimum_size = Vector2(160, 220)
 	card.size_flags_horizontal = Control.SIZE_FILL
 	card.size_flags_vertical = Control.SIZE_FILL
@@ -150,11 +154,14 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	# 1. Заголовок вверху
 	var label = Label.new()
 	label.text = title
+	label.label_settings = LabelSettings.new()
+	label.label_settings.font_size = 18
+	label.label_settings.outline_size = 3
+	label.label_settings.font_color = Color.RED
+	label.label_settings.font = font
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label.add_theme_color_override("font_color", Color.DARK_RED)
-	label.add_theme_font_size_override("font_size", 18)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	label.size_flags_horizontal = Control.SIZE_FILL
 	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -165,11 +172,14 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	# 2. НОВЫЙ ТЕКСТ - Описание посередине
 	var desc_label = Label.new()
 	desc_label.text = description
+	desc_label.label_settings = LabelSettings.new()
+	desc_label.label_settings.font_size = 14
+	desc_label.label_settings.font_color = Color.MIDNIGHT_BLUE
+	desc_label.label_settings.outline_size = 2
+	desc_label.label_settings.font = font
 	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	desc_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	desc_label.add_theme_color_override("font_color", Color.MIDNIGHT_BLUE)
-	desc_label.add_theme_font_size_override("font_size", 14)
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	desc_label.size_flags_horizontal = Control.SIZE_FILL
 	desc_label.size_flags_vertical = Control.SIZE_EXPAND_FILL  # растягивается на свободное место
@@ -179,11 +189,14 @@ func create_card(parent: Node, title: String, description: String, finger: Strin
 	
 	var f_label = Label.new()
 	f_label.text = finger
+	f_label.label_settings = LabelSettings.new()
+	f_label.label_settings.font_size = 20
+	f_label.label_settings.outline_size = 4
+	f_label.label_settings.font_color = Color.BLACK
+	f_label.label_settings.font = font
 	f_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	f_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	f_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	f_label.add_theme_color_override("font_color", Color.BLACK)
-	f_label.add_theme_font_size_override("font_size", 20)
 	f_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	f_label.size_flags_horizontal = Control.SIZE_FILL
 	f_label.size_flags_vertical = Control.SIZE_EXPAND_FILL  # растягивается на свободное место
