@@ -1,14 +1,14 @@
-class_name ScoreManagerClass
 extends Node
 
 var score: float = 0.0
 @export var scoreBaseInc: float = 1.0
-var mainLabel: Label
+@export var mainLabel: Label
+@export var font: Font
 @export var popupOffsetY: float = 30.0
 var activePopups: Array[Label] = []
 
-func _init(label: Label) -> void:
-	mainLabel = label
+func _ready() -> void:
+	pass
 
 func spawnScorePopup(value: float) -> void:
 	var newPopup = Label.new()
@@ -16,6 +16,7 @@ func spawnScorePopup(value: float) -> void:
 	newPopup.label_settings = LabelSettings.new()
 	newPopup.label_settings.font_size = 24
 	newPopup.label_settings.outline_size = 3
+	newPopup.label_settings.font = font
 	var textSize = newPopup.get_minimum_size()
 	newPopup.size = textSize
 	newPopup.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
