@@ -260,8 +260,7 @@ func inPlayingPhase(delta: float):
 			intervals[idx].data_.lives_ -= 1
 			intervals[idx].view_.startFingerAnimation()
 			if intervals[idx].data_.lives_ <= 0:
-				$"../GameOver".show()  
-				return
+				get_tree().change_scene_to_file("res://end_scene.tscn")   
 			$"../AudioKnifeFinger".play()
 		if intervals[idx].data_.flyShow_:
 			if intervals[idx].data_.checkFlyHit(hitPos):

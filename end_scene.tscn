@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://bpphr45a1g761"]
+
+[ext_resource type="Texture2D" uid="uid://3sycsqdpavpb" path="res://resources/images/end_bg.png" id="1_vitp6"]
+[ext_resource type="Script" uid="uid://f6c203ld7sr3" path="res://restart.gd" id="2_taqub"]
+[ext_resource type="Script" uid="uid://d1155iqqthvif" path="res://exit.gd" id="3_tu0sp"]
+[ext_resource type="AudioStream" uid="uid://d25sjfpfj2nx3" path="res://resources/sound/Culture_Beat_-_Mr._Vain_Instrumental_Version_(mp3.pm).mp3" id="4_taqub"]
+
+[node name="EndScene" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(629, 360)
+scale = Vector2(0.47165993, 0.47165993)
+texture = ExtResource("1_vitp6")
+
+[node name="Restart" type="Button" parent="."]
+offset_left = 367.00003
+offset_top = 611.0
+offset_right = 375.00003
+offset_bottom = 619.0
+scale = Vector2(27.53135, 10.841084)
+action_mode = 0
+script = ExtResource("2_taqub")
+
+[node name="Exit" type="Button" parent="."]
+offset_left = 647.0
+offset_top = 614.0
+offset_right = 655.0
+offset_bottom = 622.0
+scale = Vector2(27.939205, 9.779203)
+action_mode = 0
+script = ExtResource("3_tu0sp")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_taqub")
+volume_db = -16.66
+autoplay = true
+
+[connection signal="pressed" from="Restart" to="Restart" method="_on_pressed"]
+[connection signal="pressed" from="Exit" to="Exit" method="_on_pressed"]
