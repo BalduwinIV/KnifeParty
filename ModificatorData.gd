@@ -4,6 +4,7 @@ extends Object
 var interval_: int = -1
 var type_: String
 var applyed_: bool = false
+var used_: bool = false
 
 var types: Array[String] = ["increase_mnX","decrease_width", "save_finger"]
 
@@ -28,10 +29,14 @@ func apply():
 			save_finger()
 	
 func increase_mnX():
-	scoreMultiplier_ = 500
+	if applyed_ == false:
+		scoreMultiplier_ = 2
+	applyed_ = true
 	
 func decrease_width():
-	widthCrease_ *= 0.5 
+	if applyed_ == false:
+		widthCrease_ *= 0.8 
+	applyed_ = true
 	
 func save_finger():
 	if applyed_ == false:

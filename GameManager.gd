@@ -319,12 +319,15 @@ func inPlayingPhase(delta: float):
 	$"../KnifeCurve/Path2D3/PathFollow2D".reposition(cursor.data_.pos_)
 		
 func applyModificators():
+	modificatorManager.apply()
 	for m in modificatorManager.data_:
-		var idx = m.interval_
-		intervals[idx].data_.width_ *= m.widthCrease_
-
-		intervals[idx].data_.lives_ += m.lives_
-		intervals[idx].data_.scoreMultiplier_ *= m.scoreMultiplier_
+		if !m.used_:
+			var idx = m.interval_
+			m.used_ = true
+			if idx != -1:
+				intervals[idx].data_.width_ *= m.widthCrease_
+				intervals[idx].data_.lives_ += m.lives_
+				intervals[idx].data_.scoreMultiplier_ *= m.scoreMultiplier_
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
