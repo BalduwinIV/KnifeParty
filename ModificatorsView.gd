@@ -4,13 +4,51 @@ extends Control
 var hbox: HBoxContainer = HBoxContainer.new()
 var newModType: String = ""
 
+var i1: int
+var i2: int
+var i3: int
+
+var i1_s: String = ""
+var i2_s: String = ""
+var i3_s: String = ""
+
+
+func randomlyChooseInterval(type: String) -> int:
+	var choice
+	if type == "decrease_width" or type == "save_finger":
+		var arr = [1, 3, 5, 7, 9]
+		choice = arr[randi() % arr.size()]
+	if type == "increase_mnX":
+		var arr = [0, 2, 4, 6, 8, 10]
+		choice = arr[randi() % arr.size()]
+	return choice
+
+func randomForAll():
+	var choice = randomlyChooseInterval("decrease_width")
+	i1 = choice
+	choice = choice/2 +1
+	i1_s = str(choice)
+	choice = randomlyChooseInterval("increase_mnX")
+	i2 = choice
+	if choice == 0:
+		i2_s = str("<-- ") + str(choice)
+	elif choice == 10:
+		i2_s = str(choice/2) +str(" -->") 
+	else:
+		choice = (choice-1)/2 +1
+		i2_s = str(choice) +str(" <--> ")+ str(choice +1) 
+	choice = randomlyChooseInterval("save_finger")
+	i3 = choice
+	i3_s = str(choice)
+
+
 func _ready():
 	# Anchors: правый нижний угол
 	hbox.anchor_left = 1.0
 	hbox.anchor_top = 1.0
 	hbox.anchor_right = 1.0
 	hbox.anchor_bottom = 1.0
-	hbox.add_theme_constant_override("separation", 30) 
+	hbox.add_theme_constant_override("separation", 20) 
 	# Позиция относительно нижнего правого угла
 	hbox.position = Vector2(720, 300)  # сдвиг влево и вверх
 	hbox.size_flags_horizontal = Control.SIZE_FILL
@@ -19,31 +57,43 @@ func _ready():
 	add_child(hbox)
 	
 	var arr = [1, 2, 3]
-	var choice = arr[randi() % arr.size()]
+	var layout_choice = arr[randi() % arr.size()]
 	var tex = preload("res://resources/images/paper.png")
 	var icon_f = preload("res://resources/images/finger.png")
-	var icon_i = preload("res://resources/images/fly.png")
+	var icon_i = preload("res://resources/images/fingers2.png")
+	
+
+
+	var title1 = "Slim Finger"
+	var descr1 = "Reduces the width of a finger."
+
+	var title2 = "Point Multiplier"
+	var descr2 = "Gain extra points between fingers."
+
+	var title3 = "Finger Shield"
+	var descr3 = "Survive one extra hit from the knife."
+	randomForAll()
  	
  	
-	if choice == 1:
-		create_card(hbox, "Decrease Width", tex, icon_f, "_on_button1_pressed")
-		create_card(hbox, "Save Finger", tex, icon_f, "_on_button3_pressed")
-		create_card(hbox, "Increase X", tex, icon_i, "_on_button2_pressed")
-	if choice == 2:
-		create_card(hbox, "Increase X", tex, icon_i, "_on_button2_pressed")
-		create_card(hbox, "Decrease Width", tex, icon_f, "_on_button1_pressed")
-		create_card(hbox, "Save Finger", tex, icon_f, "_on_button3_pressed")
-	if choice == 3:
-		create_card(hbox, "Save Finger", tex, icon_f, "_on_button3_pressed")
-		create_card(hbox, "Decrease Width", tex, icon_f, "_on_button1_pressed")
-		create_card(hbox, "Increase X", tex, icon_i, "_on_button2_pressed")
+	if layout_choice == 1:
+		create_card(hbox, title1, descr1, i1_s, tex, icon_f, "_on_button1_pressed")
+		create_card(hbox, title3, descr3, i3_s, tex, icon_f, "_on_button3_pressed")
+		create_card(hbox, title2, descr2, i2_s, tex, icon_i, "_on_button2_pressed")
+	if layout_choice == 2:
+		create_card(hbox,title2, descr2, i2_s, tex, icon_i, "_on_button2_pressed")
+		create_card(hbox, title1, descr1, i1_s, tex, icon_f, "_on_button1_pressed")
+		create_card(hbox, title3, descr3, i3_s, tex, icon_f, "_on_button3_pressed")
+	if layout_choice == 3:
+		create_card(hbox, title3, descr3, i3_s, tex, icon_f, "_on_button3_pressed")
+		create_card(hbox, title1, descr1, i1_s, tex, icon_f, "_on_button1_pressed")
+		create_card(hbox, title2, descr2, i2_s, tex, icon_i, "_on_button2_pressed")
 	
 	hideButtons()
 
-func create_card(parent: Node, text: String, texture: Texture2D, icon_texture: Texture2D, callback: String):
+func create_card(parent: Node, title: String, description: String, finger: String, texture: Texture2D, icon_texture: Texture2D, callback: String):
 	# Создаем кнопку (карточку)
 	var card = Button.new()
-	card.custom_minimum_size = Vector2(140, 200)
+	card.custom_minimum_size = Vector2(160, 220)
 	card.size_flags_horizontal = Control.SIZE_FILL
 	card.size_flags_vertical = Control.SIZE_FILL
 	card.toggle_mode = false
@@ -84,52 +134,75 @@ func create_card(parent: Node, text: String, texture: Texture2D, icon_texture: T
 	margin.add_theme_constant_override("margin_left", 10)
 	margin.add_theme_constant_override("margin_top", 10)
 	margin.add_theme_constant_override("margin_right", 10)
-	margin.add_theme_constant_override("margin_bottom", 10)
+	margin.add_theme_constant_override("margin_bottom", 5)
 	
 	card.add_child(margin)
 	
-	# Контейнер для вертикального размещения (текст + иконка)
+	# Контейнер для вертикального размещения
 	var vbox = VBoxContainer.new()
 	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.size_flags_horizontal = Control.SIZE_FILL
 	vbox.size_flags_vertical = Control.SIZE_FILL
-	vbox.add_theme_constant_override("separation", 10)  # расстояние между элементами
+	vbox.add_theme_constant_override("separation", 2)  # расстояние между элементами
 	
 	margin.add_child(vbox)
 	
-	# Текст вверху
+	# 1. Заголовок вверху
 	var label = Label.new()
-	label.text = text
+	label.text = title
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label.add_theme_color_override("font_color", Color.NAVY_BLUE)
-	#label.add_theme_font_size_override("font_size", 16)
-	#label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	label.add_theme_color_override("font_color", Color.DARK_RED)
+	label.add_theme_font_size_override("font_size", 18)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD
 	label.size_flags_horizontal = Control.SIZE_FILL
-	label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	label.clip_text = true  # обрезает текст если он выходит за границы
+	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	label.clip_text = true
 	
 	vbox.add_child(label)
 	
-	# Разделитель (растягивается, чтобы иконка была внизу)
-	var spacer = Control.new()
-	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vbox.add_child(spacer)
+	# 2. НОВЫЙ ТЕКСТ - Описание посередине
+	var desc_label = Label.new()
+	desc_label.text = description
+	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	desc_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	desc_label.add_theme_color_override("font_color", Color.MIDNIGHT_BLUE)
+	desc_label.add_theme_font_size_override("font_size", 14)
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	desc_label.size_flags_horizontal = Control.SIZE_FILL
+	desc_label.size_flags_vertical = Control.SIZE_EXPAND_FILL  # растягивается на свободное место
+	desc_label.clip_text = true
 	
-	# Контейнер для иконки с отступами
+	vbox.add_child(desc_label)
+	
+	var f_label = Label.new()
+	f_label.text = finger
+	f_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	f_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	f_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	f_label.add_theme_color_override("font_color", Color.BLACK)
+	f_label.add_theme_font_size_override("font_size", 20)
+	f_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	f_label.size_flags_horizontal = Control.SIZE_FILL
+	f_label.size_flags_vertical = Control.SIZE_EXPAND_FILL  # растягивается на свободное место
+	f_label.clip_text = true
+	
+	vbox.add_child(f_label)
+	
+	# 3. Контейнер для иконки с отступами
 	var icon_container = MarginContainer.new()
 	icon_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	icon_container.size_flags_horizontal = Control.SIZE_FILL
 	icon_container.size_flags_vertical = Control.SIZE_SHRINK_END
-	icon_container.add_theme_constant_override("margin_left", 10)
-	icon_container.add_theme_constant_override("margin_right", 10)
+	icon_container.add_theme_constant_override("margin_left", 5)
+	icon_container.add_theme_constant_override("margin_right", 5)
 	icon_container.add_theme_constant_override("margin_bottom", 5)
 	
 	vbox.add_child(icon_container)
 	
-	# Иконка внизу
+	# 4. Иконка внизу
 	var icon = TextureRect.new()
 	icon.texture = icon_texture
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -137,12 +210,53 @@ func create_card(parent: Node, text: String, texture: Texture2D, icon_texture: T
 	icon.custom_minimum_size = Vector2(50, 50)  # размер иконки
 	icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL  # масштабирует с сохранением пропорций
+	icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	
 	icon_container.add_child(icon)
 	
 	# Подключаем клик
 	card.pressed.connect(self.get(callback))
+
+
+func redraw():
+	# Сначала очищаем текущие кнопки
+	for child in hbox.get_children():
+		child.queue_free()
+	
+	# Получаем случайное расположение
+	var arr = [1, 2, 3]
+	var layout_choice = arr[randi() % arr.size()]
+	var tex = preload("res://resources/images/paper.png")
+	var icon_f = preload("res://resources/images/finger.png")
+	var icon_i = preload("res://resources/images/fingers2.png")
+
+	var title1 = "Slim Finger"
+	var descr1 = "Reduces the width of a finger."
+
+	var title2 = "Point Multiplier"
+	var descr2 = "Gain extra points between fingers."
+
+	var title3 = "Finger Shield"
+	var descr3 = "Survive one extra hit from the knife."
+	
+	randomForAll()
+
+	if layout_choice == 1:
+		create_card(hbox, title1, descr1, i1_s, tex, icon_f, "_on_button1_pressed")
+		create_card(hbox, title3, descr3, i3_s, tex, icon_f, "_on_button3_pressed")
+		create_card(hbox, title2, descr2, i2_s, tex, icon_i, "_on_button2_pressed")
+	elif layout_choice == 2:
+		create_card(hbox, title2, descr2, i2_s, tex, icon_i, "_on_button2_pressed")
+		create_card(hbox, title1, descr1, i1_s, tex, icon_f, "_on_button1_pressed")
+		create_card(hbox, title3, descr3, i3_s, tex, icon_f, "_on_button3_pressed")
+	else:
+		create_card(hbox, title3, descr3, i3_s, tex, icon_f, "_on_button3_pressed")
+		create_card(hbox, title1, descr1, i1_s, tex, icon_f, "_on_button1_pressed")
+		create_card(hbox, title2, descr2, i2_s, tex, icon_i, "_on_button2_pressed")
+
+	# Можно сразу скрыть, если нужно
+	hideButtons()
+
 
 # Обработчики кнопок
 func _on_button1_pressed():

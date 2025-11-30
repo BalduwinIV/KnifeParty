@@ -15,6 +15,7 @@ var lives_ = 0
 
 func _init( type: String) -> void:
 	type_ = type
+	interval_ = -1
 
 func setInterval(i: int):
 	interval_ = i
@@ -35,7 +36,7 @@ func increase_mnX():
 	
 func decrease_width():
 	if applyed_ == false:
-		widthCrease_ *= 0.8 
+		widthCrease_ *= 0.5 
 	applyed_ = true
 	
 func save_finger():
