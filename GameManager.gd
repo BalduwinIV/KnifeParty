@@ -215,11 +215,11 @@ func calculateAdaptiveSpeed() -> float:
 	return adaptiveSpeed
 
 func inPlayingPhase(delta: float):
-	intervals[1].data_.recalculatePoint(f1Pos, f1Width)
-	intervals[3].data_.recalculatePoint(f2Pos, f2Width)
-	intervals[5].data_.recalculatePoint(f3Pos, f3Width)
-	intervals[7].data_.recalculatePoint(f4Pos, f4Width)
-	intervals[9].data_.recalculatePoint(f5Pos, f5Width)
+	intervals[1].data_.recalculatePoint(f1Pos, intervals[1].data_.width_)
+	intervals[3].data_.recalculatePoint(f2Pos, intervals[3].data_.width_)
+	intervals[5].data_.recalculatePoint(f3Pos, intervals[5].data_.width_)
+	intervals[7].data_.recalculatePoint(f4Pos, intervals[7].data_.width_)
+	intervals[9].data_.recalculatePoint(f5Pos, intervals[9].data_.width_)
 
 	intervals[0].data_.recalculateInterval(0.0, intervals[1].data_.start_)
 	intervals[2].data_.recalculateInterval(intervals[1].data_.end_, intervals[3].data_.start_)
@@ -238,16 +238,13 @@ func inPlayingPhase(delta: float):
 	
 	if hitRegistered:
 		hitRegistered = false
-		modificatorManager.apply()
+		applyModificators()
 		cursor.view_.start_animation()
 		var idx = getInterval(hitPos)
 		if idx%2 == 0:
 			$"../AudioKnifeInterval".play(0.15)
 		else: 
 			intervals[idx].data_.lives_ -= 1
-			if intervals[idx].data_.lives_ <= 0:
-				$"../GameOver".show()  
-				return
 			$"../AudioKnifeFinger".play()
 		if intervals[idx].data_.flyShow_:
 			if intervals[idx].data_.checkFlyHit(hitPos):
@@ -314,14 +311,26 @@ func inPlayingPhase(delta: float):
 	cursor.view_.reposition()
 	$"../KnifeCurve/Path2D3/PathFollow2D".reposition(cursor.data_.pos_)
 		
-
+func applyModificators():
+	for m in modificatorManager.data_:
+		var idx = m.interval_
+		intervals[idx].data_.width_ *= m.widthCrease_
+		
+		intervals[idx].data_.lives_ += m.lives_
+		intervals[idx].data_.scoreMultiplier_ *= m.scoreMultiplier_
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if repetition > 0:
 		inPlayingPhase(delta)
+	if modificatorManager.mustHide:
+		modificatorManager.mustHide = false
+		modificatorManager.view_.hideButtons()
+		repetition = 3
+		
 		
 	if repetition == 0:
 		playingPhase = false
 		modificatorManager.view_.showButtons()	
+	
