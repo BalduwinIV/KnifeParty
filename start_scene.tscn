@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://dclfjdxw76pqv"]
+
+[ext_resource type="Texture2D" uid="uid://c5lf1w51rtpju" path="res://resources/images/start_bg.png" id="1_mbe3m"]
+[ext_resource type="Script" uid="uid://bk78lu0150sji" path="res://playbutt.gd" id="2_kyjdd"]
+[ext_resource type="Script" uid="uid://cvgd6lg4yus8l" path="res://exitbutt.gd" id="3_jfucu"]
+
+[node name="StartScene" type="Node"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(642.00006, 360)
+scale = Vector2(0.4848161, 0.4848161)
+texture = ExtResource("1_mbe3m")
+
+[node name="Play" type="Button" parent="."]
+offset_left = 365.0
+offset_top = 617.0
+offset_right = 373.0
+offset_bottom = 625.0
+scale = Vector2(29.311512, 10.751572)
+action_mode = 0
+script = ExtResource("2_kyjdd")
+
+[node name="Exit" type="Button" parent="."]
+offset_left = 656.0
+offset_top = 619.0
+offset_right = 664.0
+offset_bottom = 627.0
+scale = Vector2(28.561586, 10.121586)
+action_mode = 0
+script = ExtResource("3_jfucu")
+
+[connection signal="pressed" from="Play" to="Play" method="_on_pressed"]
+[connection signal="pressed" from="Exit" to="Exit" method="_on_pressed"]

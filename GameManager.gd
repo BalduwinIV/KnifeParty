@@ -357,7 +357,7 @@ func newFlyOnCurve(fly_data: FliesPair):
 	follower.progress_ratio = fly_data.pos_
 	# Создаем спрайт
 	var sprite := Sprite2D.new()
-	sprite.texture = preload("res://resources/images/image (10) (1).png")
+	sprite.texture = preload("res://resources/images/fly.png")
 	# Задаем фиксированный размер
 	var target_size = Vector2(40, 40)  
 	var tex_size = sprite.texture.get_size()
